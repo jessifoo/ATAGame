@@ -49,26 +49,42 @@ private var doubleClickTimeOut : float = 0.2;
 function ControlGodzilla() : void {
 	var screenPosition : Vector2;
 	var worldPosition : Vector3;
+	var hit : RaycastHit;
+	var ray : Ray;
 	if (Input.GetButtonDown ("Fire1") && Input.mousePosition != null) {
 		//Get the mouse position:
 		screenPosition = Input.mousePosition;
 		//And the world position:
-		var hit : RaycastHit;
-		var ray : Ray = Camera.main.ScreenPointToRay (screenPosition);
+		ray = Camera.main.ScreenPointToRay (screenPosition);
 		if (Physics.Raycast (ray, hit, 100)) {
 			worldPosition = hit.point;
 			hit.point.y = 0;
 			
 			//Is this a double-click?
-			Debug.Log("lastClickTime + doubleClickTimeOut >= Time.time="+lastClickTime +"+"+ doubleClickTimeOut +">="+ Time.time +" = "+(lastClickTime + doubleClickTimeOut >= Time.time));
-			if ( lastClickTime + doubleClickTimeOut >= Time.time ) {
+			Debug.Log("lastClickTime + doubleClickTimeOut >= Time.time=" + lastClickTime +"+" + doubleClickTimeOut +">=" + Time.time +" = " + (lastClickTime + doubleClickTimeOut >= Time.time));
+			Debug.Log("Can Jump?"+godzilla.canJump);
+			if ( lastClickTime + doubleClickTimeOut >= Time.time && godzilla.canJump) {
+				Debug.Log("Do double click!");
 				//Do Double Click:
 				godzilla.JumpToPoint(worldPosition);
 			} else {
+				Debug.Log("Do single click!");
 				//Do Single Click:
 				godzilla.MoveToPoint(worldPosition);
 			}
 		}
+	} else {
+		if ( Input.mousePosition != null ) {
+			//Get the mouse position:
+			screenPosition = Input.mousePosition;
+			//And the world position:
+			ray = Camera.main.ScreenPointToRay (screenPosition);
+			if (Physics.Raycast (ray, hit, 100)) {
+				worldPosition = hit.point;
+				godzilla.LookAtPoint(hit.point);
+			}
+		}
+		
 	}
 	if ( Input.GetButtonUp("Fire1") ) {
 		lastClickTime = Time.time;

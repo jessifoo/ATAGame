@@ -218,20 +218,99 @@ public function getWorldPath_forGodzilla(from:Vector3, to:Vector3):Array {
 	var gridPointTo : Vector2 = worldPointToGridPoint(worldPointTo);
 	if ( !isGridPointAvailable(gridPointTo) ) {
 		gridPointTo = getClosestAvailableGridPointTo(worldPointTo);
-		//Get the closest real-world point to the to point:
-		var directionToToPoint : Vector3 = gridPointToWorldPoint(gridPointTo) - to;
-		directionToToPoint.Normalize();
-		
 	}
+	//Get the closest real-world point to the to point:
+	var directionToToPoint : Vector3 = to - gridPointToWorldPoint(gridPointTo);
+	directionToToPoint.y = 0;
+	//The tricky part, not clipping values if the direction we wanted to go in is 
+	var dirToToPoint_X_inc : int = directionToToPoint.x < 0 ? -1 : 1;
+	var dirToToPoint_Y_inc : int = directionToToPoint.z < 0 ? -1 : 1;
+	var gridPoint_inXdir : Vector2 = gridPointTo + new Vector2(dirToToPoint_X_inc, 0 );
+	var gridPoint_inYdir : Vector2 = gridPointTo + new Vector2(0, dirToToPoint_Y_inc );
+	var isGridPointAvailable_InXdir : boolean = isGridPointAvailable(gridPoint_inXdir);
+	var isGridPointAvailable_InYdir : boolean = isGridPointAvailable(gridPoint_inYdir);
+	
+	//Now, set up the close to point to be 
+	var closeToPoint : Vector3 = gridPointToWorldPoint(gridPointTo);
+	closeToPoint.y = 0;
+	//Godzilla's size is 0.5:
+	var godzillaBuffer : float = 0.25;
+	if (directionToToPoint.x > godzillaBuffer && !isGridPointAvailable_InXdir ) {
+		directionToToPoint.x = godzillaBuffer;
+	}
+	if (directionToToPoint.z > godzillaBuffer && !isGridPointAvailable_InYdir ) {
+		directionToToPoint.z = godzillaBuffer;
+	}
+	if (directionToToPoint.x < -1 * godzillaBuffer && !isGridPointAvailable_InXdir ) {
+		directionToToPoint.x = -1 * godzillaBuffer;
+	}
+	if (directionToToPoint.z < -1 * godzillaBuffer && !isGridPointAvailable_InYdir ) {
+		directionToToPoint.z = -1 * godzillaBuffer;
+	}
+	if (directionToToPoint.x > godzillaBuffer*2 ) {
+		directionToToPoint.x = godzillaBuffer*2;
+	}
+	if (directionToToPoint.z > godzillaBuffer*2 ) {
+		directionToToPoint.z = godzillaBuffer * 2;
+	}
+	if (directionToToPoint.z < -1 * godzillaBuffer * 2 ) {
+		directionToToPoint.z = -1 * godzillaBuffer * 2;
+	}
+	if (directionToToPoint.z < -1 * godzillaBuffer*2 ) {
+		directionToToPoint.z = -1 * godzillaBuffer * 2;
+	}
+	
+	closeToPoint += directionToToPoint;
+	
+	//Regular pathfinding:
 	var gridPath : Array = getGridPath( worldPointToGridPoint(from), gridPointTo );
+	gridPath = smoothGridPath(gridPath);
 	//var gridPath : Array = getGridPath( worldPointToGridPoint(from), worldPointToGridPoint(worldPointTo) );
 	//Copy into a world coordinate based path:
 	var worldPath : Array = new Array(gridPath.length);
 	for ( var ii : int = 0; ii < gridPath.length; ii++ ) {
 		worldPath[ii] = gridPointToWorldPoint(gridPath[ii]);
 	}
-	//Add the destination point
+	
+	//Add the close to point, and rejigger to get rid of additional points:
+	//Smooth last part of path:
+	if ( worldPath.length > 1 ) {
+		var worldPathPoint_last : Vector3 = worldPath[worldPath.length - 1];
+		var worldPathPoint_secondLast : Vector3 = worldPath[worldPath.length - 2];
+		
+		var distanceTo_LastPathPoint : float = (worldPathPoint_secondLast - worldPathPoint_last).magnitude;
+		var distanceTo_ClosePoint : float    = (worldPathPoint_secondLast - closeToPoint).magnitude;
+		if (distanceTo_LastPathPoint > distanceTo_ClosePoint) {
+			worldPath.Pop();//Remove the last element because it's too far
+		}
+	}
+	//Smooth first part of path:
+	//Add our from point to the path:
+	worldPath.Unshift(from);
+	if ( worldPath.length > 2 ) { //BASICALLY DO WE NEED SECOND???????
+		var worldPathPoint_first : Vector3  = worldPath[0];
+		var worldPathPoint_second : Vector3 = worldPath[1];
+		var worldPathPoint_third : Vector3 = worldPath[2];
+		//Distances to Third PathPoint:
+		var distanceTo_first_PathPoint : float  = (worldPathPoint_third - worldPathPoint_first).magnitude;
+		var distanceTo_second_PathPoint : float = (worldPathPoint_third - worldPathPoint_second).magnitude;
+		if (distanceTo_first_PathPoint < distanceTo_second_PathPoint) {
+			worldPath.RemoveAt(1);//Remove the middle element because it jogs
+			Debug.Log("Remove!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		}
+	}
+	if ( worldPath.length == 1 ) {
+		//Just add the closetopoint, because there's no point in adding any others
+		worldPath.Pop();
+	}
+	//Always add the closest point:
+	worldPath.Push(closeToPoint);
 	return worldPath;
+}
+//Smooth grid path
+function smoothGridPath ( gridPath : Array ) : Array {
+	//TODO: this
+	return gridPath;
 }
 
 /**

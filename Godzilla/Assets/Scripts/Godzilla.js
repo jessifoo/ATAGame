@@ -44,21 +44,85 @@ function Update () {
 
 }*/
 
+/**
+ * FIXED UPDATE!
+ */
 function FixedUpdate() {
+	/*
+	if ( isJumping ) {
+		performJump();
+		return; // ONLY do jumping
+	} else {
+		jumpCooldown(); //Cooldown the jump
+	}*/
+	
 	if ( path.length > 0 ) {
+		Debug.Log("GODZILLA Follow PATH");
 		followPath(path);
+	}
+	
+}
+
+
+
+
+
+//Look at a point
+public function LookAtPoint(point:Vector3) : void {
+	if ( path.length == 0 ) {
+		point.y = transform.position.y;
+		transform.LookAt(point);
 	}
 }
 
-//Move Godzilla to the inputted point:
+//Move Godzilla to the inputted point: (just set the path)
 public function MoveToPoint( newPoint : Vector3 ) {
-	path = city.getWorldPath(myTransform.position, newPoint);
+	path = city.getWorldPath_forGodzilla(myTransform.position, newPoint);
 }
+
+
+
 //Jump Godzilla to the inputted point:
+public var canJump : boolean = true;
+private var isJumping : boolean = false;
+// Will not be shown in the inspector or serialized
+@System.NonSerialized
+var lastJumpTime : float = 0;
+// Will not be shown in the inspector or serialized
+@System.NonSerialized
+var jump_cooldownTime : float = 5.0; //NOTE: This is from the LANDING TIME!!!!!!
+private var jumpPoint : Vector3;
 public function JumpToPoint( newPoint : Vector3 ) {
-	path = new Array();
-	Debug.Log("JUUUUUUUUUUUUUUUUUMP");
+	Debug.Log("JUMP TO POINT!!!!");
+	canJump = false; // No longer can jump until cooldown completed!
+	jumpPoint = city.gridPointToWorldPoint( city.getClosestAvailableGridPointTo(newPoint) );
+	jumpPoint.y = transform.position.y;
+	isJumping = true; //Begin jump!
+	path = new Array(); // Clear the path for now
 }
+//Perform a jump:
+function performJump() {
+	
+	
+	
+	
+}
+function endJump() {
+	isJumping = false;
+	lastJumpTime = Time.time;
+}
+
+//Cooldown the jump:
+function jumpCooldown() {
+	if ( Time.time > lastJumpTime + jump_cooldownTime) {
+		Debug.Log("Jump Cooldown");
+		canJump = true;
+	}
+}
+
+
+
+
 //FLAME ON!
 var flaming : boolean = false;
 public function FlameOn() {
@@ -120,27 +184,42 @@ public function FlameOff() {
 		}	
 	}
 	
-	
+	//Follow a path:
 	function followPath(path : Array){
-		if (path.length > 0){
-			var distance : float = Vector3.Distance (myTransform.position, path[0]);
-			if(distance < 1.1){
+		if (path.length > 0) {
+			//var prevPoint : Vector3 = path[0];
+			//var currentPoint : Vector3;
+			//for ( var ii : int = 1; ii < path.length; ii++ ) {
+				//currentPoint = path[ii];
+				//Debug.DrawLine(prevPoint,currentPoint, Color.red);
+				//prevPoint = path[ii];
+			//}
+			
+			
+			var point : Vector3 = path[0];
+			point.y = myTransform.position.y;
+			var distance : float = Vector3.Distance (myTransform.position, point);
+			//Debug.Log("Follow Path Distance " + distance);
+			//Debug.DrawLine(transform.position, point, Color.white,1);
+			if(distance <= 0.1){
 				//Debug.Log("At point");
 				path.RemoveAt(0);
 			}else{
 				//Debug.Log("Move to point");
-				moveTo(path[0]);
+				moveTo(point);
 			}
 		}
 	}
-	
+	//Move to a given point:
 	function moveTo (point : Vector3)
 	{
-		point.y = myTransform.position.y;
 		var distance : float = Vector3.Distance (myTransform.position, point);
-		myTransform.LookAt (point);
-		if (distance > 0.1) {
+		//Debug.Log("Distance "+distance);
+		if (distance > 0) {
+			myTransform.LookAt (point);
 			myTransform.position += myTransform.forward * Time.deltaTime * speed;
+		} else {
+			myTransform.position = point;
 		}
 	}
 
