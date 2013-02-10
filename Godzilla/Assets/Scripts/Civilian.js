@@ -11,6 +11,11 @@ var maxRandTurn : float = 5.0f;
 var myTransform : Transform;
 var cityGrid : CityGrid;
 var godzilla : Transform;
+var game : Game;
+var path : Array = new Array();
+var safezone : GameObject;
+var fleeing : boolean = false;
+
 
 private var flames : ParticleSystem;
 
@@ -23,25 +28,38 @@ function Start () {
 	cityGrid = GameObject.Find("CityGrid").GetComponent(CityGrid);
 	var zilla: GameObject = GameObject.Find("Godzilla");
 	godzilla = zilla.transform;
+	game = GameObject.Find("Game").GetComponent(Game);
 	
 	flames = GetComponentInChildren(ParticleSystem);
 	if (flames)
 		flames.enableEmission = false;
+		
+	safezone = GameObject.Find("SafeZone");
+	Debug.Log("safezone info: " + safezone.transform.position);
+	
+	transform.position.y = 0.06;
 
 	speedDeviation = Mathf.Clamp01(speedDeviation);
 	var deviation = Random.Range(1-speedDeviation, speedDeviation+1);
 	walkSpeed *= deviation;
 	runSpeed *= deviation;
+	
+	
 }
 
 function Update () {
+	transform.position.y = 0.06;
 	
 	var distToEnemy = Vector3.Distance(myTransform.position, godzilla.position);
-	if (distToEnemy < viewRadius) {
-		RunFromEnemy();
-	} else {
+	if (distToEnemy < viewRadius || fleeing) {
+		//RunFromEnemy();
+		RunToSafeZone();
+		fleeing = true;
+	}  else {
 		RandomWalk();
 	}
+	
+//	findNearestSafeZone();
 
 }
 
@@ -73,6 +91,17 @@ function Move( speed : float ) {
     }
 	GetComponent(CharacterController).Move(myTransform.forward * speed * Time.deltaTime);
 }
+
+function moveTo (point : Vector3)
+	{
+		point.y = myTransform.position.y;
+		var distance : float = Vector3.Distance (myTransform.position, point);
+		myTransform.LookAt (point);
+		if (distance > 0.1) {
+			myTransform.position += myTransform.forward * Time.deltaTime * runSpeed;
+		}
+	}
+
 //Rotate to a direction:
 function RotateToDirection(direction : Vector3) {
 	var dir_vec2 : Vector2 = new Vector2(direction.x, direction.z);
@@ -103,6 +132,15 @@ function RunFromEnemy() {
 	RunToPoint(dirToRun);
 }
 
+function RunToSafeZone() {
+	if(safezone){
+		Debug.Log("safezone exists");
+		startMovement(safezone.transform.position);
+	}else{
+		RunFromEnemy();
+	}
+}
+
 function OnFire() {
 	flames.enableEmission = true;
 	yield WaitForSeconds(onFireTime);
@@ -112,4 +150,40 @@ function OnFire() {
 function Kill() {
 	// TODO a score update as well...
 	Destroy(gameObject);
+	game.incrementKillBy(1);
 }
+
+function findNearestSafeZone(){
+	var safezoneLoc : Vector3 = safezone.transform.position;
+	Debug.Log("safezone: " + safezoneLoc);
+	startMovement(safezoneLoc);
+}
+
+function findSafeZones(){
+	
+	
+}
+
+function startMovement(toPosition : Vector3){
+		if(path.length > 0){
+			Debug.Log("path exists");
+			followPath(path);
+		}else{
+			Debug.Log("path does not exist");
+			path = cityGrid.getWorldPath(transform.position, toPosition);
+			followPath(path);
+		}
+	}
+	
+function followPath(path : Array){
+		if (path.length > 0){
+			var distance : float = Vector3.Distance (myTransform.position, path[0]);
+			if(distance < 0.2){
+				Debug.Log("At point");
+				path.RemoveAt(0);
+			}else{
+				Debug.Log("Move to point");
+				moveTo(path[0]);
+			}
+		}
+	}

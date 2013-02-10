@@ -1,5 +1,8 @@
 #pragma strict
 
+var killCount : int = 0;
+
+
 //Gizmo code:
 function OnDrawGizmos() {
 	Gizmos.DrawIcon(transform.position, "Game.png");
@@ -25,6 +28,7 @@ function spawnNPCs() {
 	var worldPoint : Vector3;
 	for ( var ii : int = 0; ii < availableWorldPoints.length; ii++ ) {
 		worldPoint = availableWorldPoints[ii];
+		//worldPoint.y = 0.06;
 		spawnNPCsInWorldPoint(worldPoint);
 	}
 }
@@ -43,8 +47,15 @@ function spawnNPCInWorldPoint( worldPoint : Vector3 ) {
 }
 
 
+function incrementKillBy(count : int){
+	killCount += count;
+}
 
 
+//GUI:
+function OnGUI () {
+	GUI.Label(Rect (10, 10, 100, 20), "Score: " + killCount);
+}
 
 
 function Update () {

@@ -125,10 +125,10 @@ public function FlameOff() {
 		if (path.length > 0){
 			var distance : float = Vector3.Distance (myTransform.position, path[0]);
 			if(distance < 1.1){
-				Debug.Log("At point");
+				//Debug.Log("At point");
 				path.RemoveAt(0);
 			}else{
-				Debug.Log("Move to point");
+				//Debug.Log("Move to point");
 				moveTo(path[0]);
 			}
 		}
