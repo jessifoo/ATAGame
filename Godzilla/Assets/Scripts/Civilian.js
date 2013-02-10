@@ -38,51 +38,46 @@ function Update () {
 
 }
 
-function CheckCollisionAhead(speed : float) : Vector3{
+
+function Move( speed : float ) {
 	var hit : RaycastHit;
 	var p1 : Vector3 = myTransform.position;
-	var p2 : Vector3 = p1 + myTransform.forward * speed * Time.deltaTime;
+	var p2 : Vector3 = p1 + myTransform.forward * speed * Time.deltaTime * 2;
 	var distance : float = Vector3.Distance(p1, p2);
 	
-    if ( Physics.CapsuleCast (p1, p2, myTransform.localScale.z/2, myTransform.forward, hit, distance)) {
-    	
-    	//Old Code:
-    	myTransform.Rotate(0, 180, 0);
-    	
-    	/*
-    	var direction : Vector3 = p2 - p1;
-    	var a1 : Vector3 = direction;
-    	var a2 : Vector3 = hit.point - transform.position;
-    	var cross : float = Vector3.Cross(a1, a2).y;
-    	var sign : int = cross < 0 ? -1 : 1;
-    	//I want the normal direction, rotated some degrees away from me
-    	    	    	
-    	direction = Quaternion.AngleAxis(sign*90, Vector3.up) * hit.normal;
-    	direction.Normalize();
-    	return direction;
-    	direction.y = 0;
-		transform.rotation.eulerAngles *= -1;   
-		*/ 	
+    if ( Physics.SphereCast(p1, myTransform.localScale.z, myTransform.forward, hit, distance)) {
+    	var direction : Vector3 = transform.forward;
+		direction = Vector3.Reflect(direction, hit.normal);
+		
+		direction.y = 0;
+		direction.Normalize();
+		
+		RotateToDirection(direction);
     }
-    return transform.forward;
+	GetComponent(CharacterController).Move(myTransform.forward * speed * Time.deltaTime);
+}
+//Rotate to a direction:
+function RotateToDirection(direction : Vector3) {
+	var dir_vec2 : Vector2 = new Vector2(direction.x, direction.z);
+	var forward_vec2 : Vector2 = new Vector2(transform.forward.x, transform.forward.z);
+	var angle : float = Vector2.Angle(forward_vec2, dir_vec2);
+	
+	var cross : float = Vector3.Cross(direction, transform.forward).y;
+	var sign : int = cross < 0 ? 1 : -1;
+	
+	myTransform.Rotate(0, sign * angle, 0);
 }
 
 function RandomWalk() {
 	var randTurn = Random.Range(-maxRandTurn, maxRandTurn);
 	myTransform.Rotate(0, randTurn, 0);
-	var direction = CheckCollisionAhead(walkSpeed);
-	//myTransform.position += myTransform.forward * Time.deltaTime * walkSpeed;
-	GetComponent(CharacterController).SimpleMove(direction * walkSpeed);
+	Move(walkSpeed);
 }
 
 function RunToPoint(newPos : Vector3) {
-	myTransform.LookAt(newPos);
-	CheckCollisionAhead(runSpeed);
-	//myTransform.position += myTransform.forward * Time.deltaTime * runSpeed;
-	
-	var direction = CheckCollisionAhead(runSpeed);
-	//myTransform.position += myTransform.forward * Time.deltaTime * walkSpeed;
-	GetComponent(CharacterController).SimpleMove(direction * runSpeed);
+	//myTransform.LookAt(newPos);
+	RotateToDirection( newPos );
+	Move(runSpeed);
 }
 
 function RunFromEnemy() {
