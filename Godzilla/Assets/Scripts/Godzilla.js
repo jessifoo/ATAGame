@@ -13,13 +13,16 @@ private var click : String;
 private var city : CityGrid;
 private var path : Array;
 public var fire : ParticleSystem;
+private var fireCollider : BoxCollider;
     
 
 function Start () {
 	controller = GetComponent(CharacterController);
 	myTransform = gameObject.transform;
 	city = GameObject.Find("CityGrid").GetComponent(CityGrid);
-	fire.enableEmission = false;
+	//fire.enableEmission = false;
+	fireCollider = GameObject.Find("FireBreath").GetComponent(BoxCollider).collider;
+	fireCollider.enabled = false;
 }
 
 function Update () {
@@ -31,8 +34,10 @@ function Update () {
 			}
 	}else if(Input.GetMouseButton(1)){
 		fire.enableEmission = true;
+		fireCollider.enabled = true;
 	}else if(Input.GetMouseButtonUp){
 		fire.enableEmission = false;
+		fireCollider.enabled = false;
 	}else if(Input.GetTouch != null){
 				//if(Input.GetTouch(0).position != null){
 				//	position = new Vector3 (Input.GetTouch(0).position.x, myTransform.position.y, Input.GetTouch(0).position.y);
