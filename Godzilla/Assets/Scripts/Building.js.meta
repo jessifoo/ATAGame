@@ -2,7 +2,9 @@ fileFormatVersion: 2
 guid: ada1e312281d75747ad240181ac203dc
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - building_Destroy_Cloud_Prefab: {fileID: 100000, guid: c891296f98605f844b405a4fb1a39c7c,
+      type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

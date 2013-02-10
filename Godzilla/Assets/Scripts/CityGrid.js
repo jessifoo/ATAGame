@@ -90,6 +90,11 @@ function addBuilding (building : GameObject) : void {
 	var gridPoint : Vector2 = worldPointToGridPoint( building.transform.position );
 	canMoveGrid[gridPoint.x, gridPoint.y] = false;
 }
+//Free up a world space:
+function freeWorldSpace( worldPoint : Vector3 ) {
+	var gridPoint : Vector2 = worldPointToGridPoint(worldPoint);
+	canMoveGrid[gridPoint.x, gridPoint.y] = true;
+}
 
 //Utility function to trace out the Grid:
 function debug_outputGrid () : void {
@@ -205,7 +210,6 @@ function isGridPointInGrid(gridPoint : Vector2) : boolean {
 
 
 
-
 /**
  * Gets the World Path from one point to another point FOR GODZILLA!
  * @param	from
@@ -265,6 +269,9 @@ public function getWorldPath_forGodzilla(from:Vector3, to:Vector3):Array {
 	//Regular pathfinding:
 	var gridPath : Array = getGridPath( worldPointToGridPoint(from), gridPointTo );
 	gridPath = smoothGridPath(gridPath);
+	if ( gridPath.length == 0 ) {
+		return gridPath;
+	}
 	//var gridPath : Array = getGridPath( worldPointToGridPoint(from), worldPointToGridPoint(worldPointTo) );
 	//Copy into a world coordinate based path:
 	var worldPath : Array = new Array(gridPath.length);
@@ -303,7 +310,7 @@ public function getWorldPath_forGodzilla(from:Vector3, to:Vector3):Array {
 		//Just add the closetopoint, because there's no point in adding any others
 		worldPath.Pop();
 	}
-	//Always add the closest point:
+	//Always add the closest point
 	worldPath.Push(closeToPoint);
 	return worldPath;
 }
@@ -359,6 +366,41 @@ function getClosestAvailableGridPointTo(worldPoint : Vector3) : Vector2 {
 		}
 	}
 	return closestGridPoint;
+}
+//Find the closest grid point to a particular world point:
+function getClosestGridPointTo(worldPoint : Vector3) : Vector2 {
+	var closestDistanceToWorldPoint : float = Mathf.Infinity;
+	var distanceToWorldPoint : float;
+	var otherWorldPoint : Vector3;
+	var otherGridPoint : Vector2;
+	var closestGridPoint : Vector2;
+	var ii : int;
+	var jj : int;
+	for ( jj = gridSizeZ-1; jj >= 0; jj-- ) {
+		for ( ii = 0; ii < gridSizeX; ii++ ) {
+			otherGridPoint = new Vector2(ii, jj);
+			otherWorldPoint = gridPointToWorldPoint(otherGridPoint);
+			distanceToWorldPoint = (worldPoint - otherWorldPoint).magnitude;
+			if ( distanceToWorldPoint < closestDistanceToWorldPoint ) {
+				closestDistanceToWorldPoint = distanceToWorldPoint;
+				closestGridPoint = otherGridPoint;
+			}
+		}
+	}
+	return closestGridPoint;
+}
+
+//Get Blocking GameObject at GridPoitn ( this could be a building or a tank or something)
+function getBlockingObjectAtGridPoint(gridPoint : Vector2 ) : GameObject {
+	var buildings : Array = GameObject.FindGameObjectsWithTag("Building");
+	var buildingGridPoint : Vector2;
+	for ( var building : GameObject in buildings ) {
+		buildingGridPoint = worldPointToGridPoint(building.transform.position);
+		if ( buildingGridPoint == gridPoint ) {
+			return building;
+		}
+	}
+	return null;
 }
 
 /**

@@ -81,6 +81,7 @@ public function MoveToPoint( newPoint : Vector3 ) {
 
 
 //Jump Godzilla to the inputted point:
+private var allowBuildingJumping = true;
 public var canJump : boolean = true;
 private var isJumping : boolean = false;
 // Will not be shown in the inspector or serialized
@@ -92,7 +93,16 @@ var jump_cooldownTime : float = 5.0; //NOTE: This is from the LANDING TIME!!!!!!
 private var jumpPoint : Vector3;
 public function JumpToPoint( newPoint : Vector3 ) {
 	canJump = false; // No longer can jump until cooldown completed!
-	jumpPoint = city.gridPointToWorldPoint( city.getClosestAvailableGridPointTo(newPoint) );
+	if ( allowBuildingJumping ) {
+		//Building jumping possibilities:
+		var gridPoint : Vector2 = city.getClosestGridPointTo(newPoint);
+		jumpPoint = city.gridPointToWorldPoint( gridPoint );
+		if ( !city.isGridPointAvailable(gridPoint) ) {
+			buildingToLandOn = city.getBlockingObjectAtGridPoint(gridPoint);
+		}
+	} else {
+		jumpPoint = city.gridPointToWorldPoint( city.getClosestAvailableGridPointTo(newPoint) ); //OLD, NO BUILDING DESTRUCTION
+	}
 	jumpPoint.y = transform.position.y;
 	path = new Array(); // Clear the path for now
 	LookAtPoint(jumpPoint);
@@ -151,6 +161,7 @@ function performJump() {
 	if ( jump_state == 3 ) { //We're here!
 		transform.position = jumpLandPoint;
 		cameraStartPosition = Camera.main.gameObject.transform.position;
+		doJumpDamage();
 		jump_state++;
 	}
 	if ( jump_state == 4 ) { //RUMBLE CAMERA!
@@ -167,6 +178,16 @@ function performJump() {
 		isJumping = false;
 		endJump();
 	}
+}
+//Do the damage!
+private var buildingToLandOn : GameObject = null;
+function doJumpDamage() {
+	if ( buildingToLandOn != null ) {
+		buildingToLandOn.BroadcastMessage("DoDeath", null, SendMessageOptions.DontRequireReceiver);
+		buildingToLandOn = null;
+	}
+	//Get all NPCs in area:
+	
 }
 
 

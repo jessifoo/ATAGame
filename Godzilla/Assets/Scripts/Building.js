@@ -17,6 +17,11 @@ var health : float = 100;
 function FixedUpdate () {
 	
 }
+function Start () {
+	//DoDeath();
+}
+
+
 
 //Building got damaged!
 function Damage ( amount : float ) {
@@ -29,9 +34,13 @@ function Damage ( amount : float ) {
 }
 
 //Perform the death:
+var building_Destroy_Cloud_Prefab : GameObject;
 function DoDeath() {
-	//TODO: Add some fancy graphical effects here
-	Destroy(this);
+	//Add some fancy graphical effects here
+	Instantiate(building_Destroy_Cloud_Prefab, transform.position, transform.rotation);
+	//Free Up my space in CityGrid:
+	GameObject.Find("CityGrid").GetComponent(CityGrid).freeWorldSpace(transform.position);
+	Destroy(gameObject);
 }
 
 //Play damaged animation
