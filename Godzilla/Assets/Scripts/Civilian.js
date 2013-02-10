@@ -4,12 +4,15 @@
 var walkSpeed : float = 1f;
 var runSpeed : float = 3f;
 var viewRadius : float = 5f;
+var onFireTime : float = 3.0f;
 var speedDeviation : float = 0.5f;
 var maxRandTurn : float = 5.0f;
 
 var myTransform : Transform;
 var cityGrid : CityGrid;
 var godzilla : Transform;
+
+private var flames : ParticleSystem;
 
 // testing values
 var testPoint = Vector3(20, 0.5, 20);
@@ -20,6 +23,10 @@ function Start () {
 	cityGrid = GameObject.Find("CityGrid").GetComponent(CityGrid);
 	var zilla: GameObject = GameObject.Find("Godzilla");
 	godzilla = zilla.transform;
+	
+	flames = GetComponentInChildren(ParticleSystem);
+	if (flames)
+		flames.enableEmission = false;
 
 	speedDeviation = Mathf.Clamp01(speedDeviation);
 	var deviation = Random.Range(1-speedDeviation, speedDeviation+1);
@@ -38,6 +45,16 @@ function Update () {
 
 }
 
+function OnTriggerEnter(other : Collider) {
+	print("trigger enter");
+	if (other.name == "Godzilla") {
+		Kill();
+		print("kill civilian");
+	} else if (other.name == "FireBreath") {
+		OnFire();
+		print("civi on fire");
+	}
+}
 
 function Move( speed : float ) {
 	var hit : RaycastHit;
@@ -84,4 +101,15 @@ function RunFromEnemy() {
 	var dirToRun : Vector3 = myTransform.position - godzilla.position;
 	dirToRun.y = 0;
 	RunToPoint(dirToRun);
+}
+
+function OnFire() {
+	flames.enableEmission = true;
+	yield WaitForSeconds(onFireTime);
+	Kill();
+}
+
+function Kill() {
+	// TODO a score update as well...
+	Destroy(gameObject);
 }

@@ -13,11 +13,18 @@ private var click : String;
 private var city : CityGrid;
 private var path : Array = new Array();
 public var fire : ParticleSystem;
+private var fireCollider : BoxCollider;
 
 function Start () {
 	controller = GetComponent(CharacterController);
 	myTransform = gameObject.transform;
 	city = GameObject.Find("CityGrid").GetComponent(CityGrid);
+	
+	fire = GetComponentInChildren(ParticleSystem);
+	if (fire)
+		fire.enableEmission = false;
+	fireCollider = GameObject.Find("FireBreath").GetComponent(BoxCollider).collider;
+	fireCollider.enabled = false;
 }
 
 /*
@@ -57,11 +64,13 @@ var flaming : boolean = false;
 public function FlameOn() {
 	flaming = true;
 	fire.enableEmission = true;
+	fireCollider.enabled = true;
 	Debug.Log("FLAAAAAAAAAAAAME!!!");
 }
 public function FlameOff() {
 	fire.enableEmission = false;
 	flaming = false;
+	fireCollider.enabled = false;
 }
 
 
