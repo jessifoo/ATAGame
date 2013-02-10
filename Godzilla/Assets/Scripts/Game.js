@@ -3,6 +3,7 @@
 var killCount : int = 0;
 var escapeCount : int = 0;
 var escapedGameOverNum : int = 40;
+private var gameover : boolean = false;
 
 
 //Gizmo code:
@@ -61,12 +62,18 @@ function civilianEscaped(count : int){
 
 function GameOver() {
 	Debug.Log("Game is now Over!");
+	gameover = true;
+	yield WaitForSeconds(2);
+	LevelLoadFade.FadeAndLoadLevel("Start", Color.white, 2.0);
 }
 
 //GUI:
 function OnGUI () {
 	GUI.Label(Rect (10, 10, 100, 20), "Score: " + killCount);
 	GUI.Label(Rect (10, 30, 100, 20), "Escaped: " + escapeCount + "/"+escapedGameOverNum);
+	if(gameover){
+		GUI.Label(Rect (Screen.height/2,Screen.width/2,100,20), "GAMEOVER");
+	}
 }
 
 

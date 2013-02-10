@@ -1,10 +1,12 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Civilian.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Game.js">
     <Files>
-      <File FileName="Assets/Scripts/Civilian.js" Line="165" Column="2" />
-      <File FileName="Assets/Scripts/SafeZone.js" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Game.js" Line="63" Column="33" />
+      <File FileName="Assets/Scripts/Civilian.js" Line="205" Column="19" />
+      <File FileName="Assets/Scripts/Godzilla.js" Line="245" Column="8" />
+      <File FileName="Assets/Scripts/startMenu.js" Line="36" Column="2" />
+      <File FileName="Assets/Scripts/LevelLoadFade.js" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Game.js" Line="4" Column="16" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
