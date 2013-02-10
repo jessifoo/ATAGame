@@ -56,7 +56,6 @@ function FixedUpdate() {
 	}
 	
 	if ( path.length > 0 ) {
-		//Debug.Log("GODZILLA Follow PATH");
 		followPath(path);
 	}
 	
@@ -200,7 +199,6 @@ public function FlameOn() {
 	flaming = true;
 	fire.enableEmission = true;
 	fireCollider.enabled = true;
-	Debug.Log("FLAAAAAAAAAAAAME!!!");
 }
 public function FlameOff() {
 	fire.enableEmission = false;

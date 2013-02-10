@@ -40,7 +40,7 @@ function Start () {
 	//safezone = GameObject.Find("SafeZone");
 	safezones = GameObject.FindGameObjectsWithTag("SafeZone");
 	findNearestSafeZone();
-	Debug.Log("safezone info: " + safezone.transform.position);
+	//Debug.Log("safezone info: " + safezone.transform.position);
 	
 	transform.position.y = 0.06;
 
@@ -142,7 +142,7 @@ function RunFromEnemy() {
 
 function RunToSafeZone() {
 	if(safezone){
-		Debug.Log("safezone exists");
+		//Debug.Log("safezone exists");
 		startMovement(safezone.transform.position);
 	}else{
 		RunFromEnemy();
@@ -184,10 +184,10 @@ function findSafeZones(){
 
 function startMovement(toPosition : Vector3){
 		if(path.length > 0){
-			Debug.Log("path exists");
+			//Debug.Log("path exists");
 			followPath(path);
 		}else{
-			Debug.Log("path does not exist");
+			//Debug.Log("path does not exist");
 			path = cityGrid.getWorldPath(transform.position, toPosition);
 			followPath(path);
 		}
@@ -197,10 +197,10 @@ function followPath(path : Array){
 		if (path.length > 0){
 			var distance : float = Vector3.Distance (myTransform.position, path[0]);
 			if(distance < 0.2){
-				Debug.Log("At point");
+				//Debug.Log("At point");
 				path.RemoveAt(0);
 			}else{
-				Debug.Log("Move to point");
+				//Debug.Log("Move to point");
 				moveTo(path[0]);
 			}
 		}
