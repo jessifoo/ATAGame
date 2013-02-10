@@ -48,16 +48,15 @@ function Update () {
  * FIXED UPDATE!
  */
 function FixedUpdate() {
-	/*
 	if ( isJumping ) {
 		performJump();
 		return; // ONLY do jumping
 	} else {
 		jumpCooldown(); //Cooldown the jump
-	}*/
+	}
 	
 	if ( path.length > 0 ) {
-		Debug.Log("GODZILLA Follow PATH");
+		//Debug.Log("GODZILLA Follow PATH");
 		followPath(path);
 	}
 	
@@ -69,7 +68,7 @@ function FixedUpdate() {
 
 //Look at a point
 public function LookAtPoint(point:Vector3) : void {
-	if ( path.length == 0 ) {
+	if ( path.length == 0 && !isJumping ) {
 		point.y = transform.position.y;
 		transform.LookAt(point);
 	}
@@ -93,32 +92,104 @@ var lastJumpTime : float = 0;
 var jump_cooldownTime : float = 5.0; //NOTE: This is from the LANDING TIME!!!!!!
 private var jumpPoint : Vector3;
 public function JumpToPoint( newPoint : Vector3 ) {
-	Debug.Log("JUMP TO POINT!!!!");
 	canJump = false; // No longer can jump until cooldown completed!
 	jumpPoint = city.gridPointToWorldPoint( city.getClosestAvailableGridPointTo(newPoint) );
 	jumpPoint.y = transform.position.y;
-	isJumping = true; //Begin jump!
 	path = new Array(); // Clear the path for now
+	LookAtPoint(jumpPoint);
+	isJumping = true; //Begin jump!
+	calculateJumpPoints();
+}
+//Calculate out a jump:
+private var jumpTakeOffPoint : Vector3;
+private var jumpVerticalPoint1 : Vector3;
+private var jumpVerticalPoint2 : Vector3;
+private var jumpLandPoint : Vector3;
+private var jumpHeight : float = 10.0;
+private var jump_PhaseFrames : float = 20;//Frames until jumpPhase is over
+private var jump_PhaseFrame : float = 0;//Current frame of jumpPhase
+function calculateJumpPoints() {
+	jumpTakeOffPoint = transform.position;
+	jumpVerticalPoint1 = jumpTakeOffPoint + Vector3.up * jumpHeight;
+	jumpLandPoint = jumpPoint;
+	jumpVerticalPoint2 = jumpLandPoint + Vector3.up * jumpHeight;
+	jump_state = 0;
+	jumpHeight = Camera.main.gameObject.transform.position.y;
 }
 //Perform a jump:
+private var jump_state : int = 0;
+private var cameraStartPosition : Vector3;
 function performJump() {
-	
-	
-	
-	
+	var newPosition : Vector3;
+	//Where am I on the jump:
+	if ( jump_state == 0 ) { //Takeoff:
+		jump_PhaseFrame++;
+		newPosition = Vector3.Slerp( jumpTakeOffPoint, jumpVerticalPoint1, jump_PhaseFrame / jump_PhaseFrames);
+		transform.position = newPosition;
+		if ( jump_PhaseFrame >= jump_PhaseFrames ) {
+			jump_PhaseFrame = 0.0;
+			jump_state++;
+		}
+	}
+	if ( jump_state == 1 ) { //Go from P1 to P2:
+		jump_PhaseFrame++;
+		newPosition = Vector3.Slerp( jumpVerticalPoint1, jumpVerticalPoint2, jump_PhaseFrame / jump_PhaseFrames);
+		transform.position = newPosition;
+		if ( jump_PhaseFrame >= jump_PhaseFrames ) {
+			jump_PhaseFrame = 0.0;
+			jump_state++;
+		}
+	}
+	if ( jump_state == 2 ) { //Go from P2 to Ground:
+		jump_PhaseFrame++;
+		newPosition = Vector3.Slerp( jumpVerticalPoint2, jumpLandPoint, jump_PhaseFrame / jump_PhaseFrames);
+		transform.position = newPosition;
+		if ( jump_PhaseFrame == jump_PhaseFrames ) {
+			jump_PhaseFrame = 0.0;
+			jump_state++;
+		}
+	}
+	if ( jump_state == 3 ) { //We're here!
+		transform.position = jumpLandPoint;
+		cameraStartPosition = Camera.main.gameObject.transform.position;
+		jump_state++;
+	}
+	if ( jump_state == 4 ) { //RUMBLE CAMERA!
+		jump_PhaseFrame++;
+		var shakeAmt : float = Random.Range(0, jump_PhaseFrame - jump_PhaseFrames) / jump_PhaseFrames;
+		Camera.main.gameObject.transform.position = cameraStartPosition + Vector3.up * shakeAmt;
+		if ( jump_PhaseFrame == jump_PhaseFrames / 2) {
+			Camera.main.gameObject.transform.position = cameraStartPosition;
+			jump_PhaseFrame = 0.0;
+			jump_state++;
+		}
+	}
+	if ( jump_state == 5 ) {
+		isJumping = false;
+		endJump();
+	}
 }
+
+
 function endJump() {
 	isJumping = false;
 	lastJumpTime = Time.time;
+	path = new Array();
 }
 
 //Cooldown the jump:
 function jumpCooldown() {
 	if ( Time.time > lastJumpTime + jump_cooldownTime) {
-		Debug.Log("Jump Cooldown");
 		canJump = true;
 	}
 }
+
+
+
+
+
+
+
 
 
 
@@ -144,6 +215,10 @@ public function FlameOff() {
 
 
 
+
+/**
+ * MOVEMENT CODE BELOW:
+ */
 	function startMovement(toPosition : Vector3){
 		var ray : Ray = Camera.main.ScreenPointToRay (toPosition);
 		if (Physics.Raycast (ray, hit, 100)) {
@@ -155,7 +230,7 @@ public function FlameOff() {
 			followPath(path);
 		}
 	}
-	
+	/*
 	function detectClickPC(position : Vector3){
 	if (Input.GetMouseButtonDown (0)) {
 			buttonDownPhaseStart = Time.time; 
@@ -182,7 +257,7 @@ public function FlameOff() {
 				}    
 			}
 		}	
-	}
+	}*/
 	
 	//Follow a path:
 	function followPath(path : Array){
@@ -225,7 +300,7 @@ public function FlameOff() {
 
 
 	
-	
+	/*
 	function leap(position : Vector3){
 		Debug.Log("in leap");
 		//var direction : Vector3 = (position - myTransform.position).normalized;
@@ -242,4 +317,4 @@ public function FlameOff() {
 	
 	function OnGUI(){
 		GUI.Label (Rect (10, 10, 100, 20), " ");
-	}		
+	}*/		
