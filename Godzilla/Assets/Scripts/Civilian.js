@@ -72,13 +72,12 @@ function Update () {
 }
 
 function OnTriggerEnter(other : Collider) {
-	print("trigger enter");
 	if (other.name == "Godzilla") {
 		Kill();
-		print("kill civilian");
 	} else if (other.name == "FireBreath") {
 		OnFire();
-		print("civi on fire");
+	} else if (other.name == "SafeZone") {
+		Escape();
 	}
 }
 
@@ -156,9 +155,15 @@ function OnFire() {
 }
 
 function Kill() {
-	// TODO a score update as well...
+	if (game != null)
+		game.incrementKillBy(1);
 	Destroy(gameObject);
-	game.incrementKillBy(1);
+}
+
+function Escape() {
+	if (game != null)
+		game.civilianEscaped(1);
+	Destroy(gameObject);
 }
 
 function findNearestSafeZone(){
