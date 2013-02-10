@@ -108,6 +108,28 @@ function debug_outputGrid () : void {
 	}
 	Debug.Log(gridString);
 }
+//Get all available grid points:
+function getAvailableGridPoints() : Array {
+	var availableGridPoints : Array = new Array();
+	var ii : int;
+	var jj : int;
+	for ( jj = gridSizeZ-1; jj >= 0; jj-- ) {
+		for ( ii = 0; ii < gridSizeX; ii++ ) {
+			if ( canMoveGrid[ii, jj] ) {
+				availableGridPoints.Push(new Vector2(ii,jj));
+			}
+		}
+	}
+	return availableGridPoints;
+}
+//Get all available world points:
+function getAvailableWorldPoints() : Array {
+	var availableGridPoints : Array = getAvailableGridPoints();
+	for ( var ii : int = 0; ii < availableGridPoints.length; ii++ ) {
+		availableGridPoints[ii] = gridPointToWorldPoint(availableGridPoints[ii]);
+	}
+	return availableGridPoints;
+}
 
 
 
@@ -184,6 +206,33 @@ function isGridPointInGrid(gridPoint : Vector2) : boolean {
 
 
 
+/**
+ * Gets the World Path from one point to another point FOR GODZILLA!
+ * @param	from
+ * @param	to
+ * @return
+ */
+public function getWorldPath_forGodzilla(from:Vector3, to:Vector3):Array {
+	var worldPointTo : Vector3 = to;
+	//Use the closest Grid Point to the inputted point:
+	var gridPointTo : Vector2 = worldPointToGridPoint(worldPointTo);
+	if ( !isGridPointAvailable(gridPointTo) ) {
+		gridPointTo = getClosestAvailableGridPointTo(worldPointTo);
+		//Get the closest real-world point to the to point:
+		var directionToToPoint : Vector3 = gridPointToWorldPoint(gridPointTo) - to;
+		directionToToPoint.Normalize();
+		
+	}
+	var gridPath : Array = getGridPath( worldPointToGridPoint(from), gridPointTo );
+	//var gridPath : Array = getGridPath( worldPointToGridPoint(from), worldPointToGridPoint(worldPointTo) );
+	//Copy into a world coordinate based path:
+	var worldPath : Array = new Array(gridPath.length);
+	for ( var ii : int = 0; ii < gridPath.length; ii++ ) {
+		worldPath[ii] = gridPointToWorldPoint(gridPath[ii]);
+	}
+	//Add the destination point
+	return worldPath;
+}
 
 /**
  * Gets the World Path from one point to another point
@@ -192,12 +241,45 @@ function isGridPointInGrid(gridPoint : Vector2) : boolean {
  * @return
  */
 public function getWorldPath(from:Vector3, to:Vector3):Array {
-	var gridPath : Array = getGridPath( worldPointToGridPoint(from), worldPointToGridPoint(to) );
+	var worldPointTo : Vector3 = to;
+	//Use the closest Grid Point to the inputted point:
+	var gridPointTo : Vector2 = worldPointToGridPoint(worldPointTo);
+	if ( !isGridPointAvailable(gridPointTo) ) {
+		gridPointTo = getClosestAvailableGridPointTo(worldPointTo);
+	}
+	var gridPath : Array = getGridPath( worldPointToGridPoint(from), gridPointTo );
+	//var gridPath : Array = getGridPath( worldPointToGridPoint(from), worldPointToGridPoint(worldPointTo) );
+	//Copy into a world coordinate based path:
 	var worldPath : Array = new Array(gridPath.length);
 	for ( var ii : int = 0; ii < gridPath.length; ii++ ) {
 		worldPath[ii] = gridPointToWorldPoint(gridPath[ii]);
 	}
+	//Add the destination point
 	return worldPath;
+}
+//Find the closest available grid point to a particular world point:
+function getClosestAvailableGridPointTo(worldPoint : Vector3) : Vector2 {
+	var closestDistanceToWorldPoint : float = Mathf.Infinity;
+	var distanceToWorldPoint : float;
+	var otherWorldPoint : Vector3;
+	var otherGridPoint : Vector2;
+	var closestGridPoint : Vector2;
+	var ii : int;
+	var jj : int;
+	for ( jj = gridSizeZ-1; jj >= 0; jj-- ) {
+		for ( ii = 0; ii < gridSizeX; ii++ ) {
+			if ( canMoveGrid[ii, jj] ) {
+				otherGridPoint = new Vector2(ii, jj);
+				otherWorldPoint = gridPointToWorldPoint(otherGridPoint);
+				distanceToWorldPoint = (worldPoint - otherWorldPoint).magnitude;
+				if ( distanceToWorldPoint < closestDistanceToWorldPoint ) {
+					closestDistanceToWorldPoint = distanceToWorldPoint;
+					closestGridPoint = otherGridPoint;
+				}
+			}
+		}
+	}
+	return closestGridPoint;
 }
 
 /**

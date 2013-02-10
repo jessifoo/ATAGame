@@ -11,7 +11,7 @@ private var mousePos : Vector3;
 private var target : Vector3;
 private var click : String;
 private var city : CityGrid;
-private var path : Array;
+private var path : Array = new Array();
 
 function Start () {
 	controller = GetComponent(CharacterController);
@@ -19,6 +19,7 @@ function Start () {
 	city = GameObject.Find("CityGrid").GetComponent(CityGrid);
 }
 
+/*
 function Update () {
 	var position : Vector3;	
 	if (Input.GetButtonDown ("Fire1")) {
@@ -33,8 +34,40 @@ function Update () {
 	}	
 	startMovement(position);
 
+}*/
+
+function FixedUpdate() {
+	if ( path.length > 0 ) {
+		followPath(path);
 	}
-	
+}
+
+//Move Godzilla to the inputted point:
+public function MoveToPoint( newPoint : Vector3 ) {
+	path = city.getWorldPath(myTransform.position, newPoint);
+}
+//Jump Godzilla to the inputted point:
+public function JumpToPoint( newPoint : Vector3 ) {
+	path = new Array();
+	Debug.Log("JUUUUUUUUUUUUUUUUUMP");
+}
+//FLAME ON!
+var flaming : boolean = false;
+public function FlameOn() {
+	flaming = true;
+	Debug.Log("FLAAAAAAAAAAAAME!!!");
+}
+public function FlameOff() {
+	flaming = false;
+}
+
+
+
+
+
+
+
+
 	function startMovement(toPosition : Vector3){
 		var ray : Ray = Camera.main.ScreenPointToRay (toPosition);
 		if (Physics.Raycast (ray, hit, 100)) {
