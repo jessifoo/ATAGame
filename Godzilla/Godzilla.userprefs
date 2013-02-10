@@ -1,11 +1,11 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Godzilla.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Civilian.js">
     <Files>
-      <File FileName="Assets/Scripts/CityGrid.js" Line="234" Column="14" />
-      <File FileName="Assets/Scripts/GridMaxPoint.js" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/TestGrid.js" Line="10" Column="2" />
-      <File FileName="Assets/Scripts/Godzilla.js" Line="119" Column="6" />
+      <File FileName="Assets/Scripts/Civilian.js" Line="52" Column="8" />
+      <File FileName="Assets/Scripts/TestGrid.js" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/CityGrid.js" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Godzilla.js" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
