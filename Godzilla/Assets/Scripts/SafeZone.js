@@ -9,7 +9,7 @@ function OnDrawGizmos() {
 	safeZoneScale.z *= 1;
 	Gizmos.DrawCube(transform.position + Vector3.forward/2 + Vector3.right/2 + Vector3.up/2, safeZoneScale);
 }
-
+/*
 var godzillaBlocking : boolean = false;
 function OnTriggerEnter(other : Collider) {
 	Debug.Log("Other=" + other.gameObject);
@@ -26,3 +26,4 @@ function OnTriggerExit(other : Collider) {
 		godzillaBlocking = false;
 	}
 }
+*/
