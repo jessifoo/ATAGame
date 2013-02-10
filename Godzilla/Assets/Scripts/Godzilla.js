@@ -12,6 +12,7 @@ private var target : Vector3;
 private var click : String;
 private var city : CityGrid;
 private var path : Array = new Array();
+public var fire : ParticleSystem;
 
 function Start () {
 	controller = GetComponent(CharacterController);
@@ -55,9 +56,11 @@ public function JumpToPoint( newPoint : Vector3 ) {
 var flaming : boolean = false;
 public function FlameOn() {
 	flaming = true;
+	fire.enableEmission = true;
 	Debug.Log("FLAAAAAAAAAAAAME!!!");
 }
 public function FlameOff() {
+	fire.enableEmission = false;
 	flaming = false;
 }
 
