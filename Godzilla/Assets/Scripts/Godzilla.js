@@ -7,14 +7,10 @@ private var controller : CharacterController;
 private var buttonDownPhaseStart : float;
 private var doubleClickPhaseStart : float;
 var speed : float = 3.0F;
-private var rotateSpeed : float = 3.0F;
 private var mousePos : Vector3;
 private var target : Vector3;
-private var atPosition : int;
-private var oldPosition : Vector3;
 private var click : String;
 private var city : CityGrid;
-private var isPath : boolean = false;
 private var path : Array;
 
 function Start () {
