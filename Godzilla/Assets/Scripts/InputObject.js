@@ -9,6 +9,8 @@ function OnDrawGizmos() {
  * INPUT OBJECT
  * 
  * ALL INPUT SHOULD GO THROUGH HERE
+ * 
+ * Also GUI CODE SHOULD GO HERE
  */
 
 var godzilla : Godzilla;
@@ -25,6 +27,21 @@ function FixedUpdate () {
 	ControlGodzilla();
 	MoveCamera();
 }
+//GUI:
+function OnGUI () {
+	
+}
+
+
+
+
+
+
+
+
+
+
+
 
 //Perform Fire1 Actions:
 var lastClickTime : float = 0;
@@ -63,6 +80,17 @@ function ControlGodzilla() : void {
 		godzilla.FlameOff();
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
 
 //Move the Camera:
 function MoveCamera() : void {
