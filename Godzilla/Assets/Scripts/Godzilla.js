@@ -187,7 +187,12 @@ function doJumpDamage() {
 		buildingToLandOn = null;
 	}
 	//Get all NPCs in area:
-	
+	var allObjectsInArea : Collider[] = Physics.OverlapSphere(jumpLandPoint, 0.5);
+	for ( var collider : Collider in allObjectsInArea ) {
+		if ( collider.gameObject.name == "NPC" ) {
+			collider.gameObject.BroadcastMessage("Kill", null, SendMessageOptions.DontRequireReceiver);
+		}
+	}
 }
 
 
