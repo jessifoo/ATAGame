@@ -4,6 +4,7 @@ var killCount : int = 0;
 var escapeCount : int = 0;
 var escapedGameOverNum : int = 40;
 private var gameover : boolean = false;
+var gameoverPic : Texture;
 
 
 //Gizmo code:
@@ -72,7 +73,7 @@ function OnGUI () {
 	GUI.Label(Rect (10, 10, 100, 20), "Score: " + killCount);
 	GUI.Label(Rect (10, 30, 100, 20), "Escaped: " + escapeCount + "/"+escapedGameOverNum);
 	if(gameover){
-		GUI.Label(Rect (Screen.height/2,Screen.width/2,100,20), "GAMEOVER");
+		GUI.Label(Rect ((Screen.height/2)-150,(Screen.width/2)-200,(Screen.height*1.3),(Screen.width)), gameoverPic);
 	}
 }
 
