@@ -24,13 +24,15 @@ function OnGUI() {
 		//	Debug.Log ("Button");
     	//	Application.LoadLevel ("Instructions");
     	//}
+    	//GUI.Label(Rect(0,0,Screen.height*2,Screen.width),background);
+		
     	
 			
-			if (GUI.Button(Rect((Screen.width/2)-180,Screen.height-100,100,30),"Start")){
+			if (GUI.Button(Rect((Screen.width/2)-30,Screen.height-150,100,30),"Start")){
     		LevelLoadFade.FadeAndLoadLevel("GridCity", Color.white, 2.0);
     	}
-			if (GUI.Button(Rect((Screen.width/2)+100,Screen.height-100,100,30),"Credits")){
-    		LevelLoadFade.FadeAndLoadLevel("Credits", Color.white, 2.0);
-    	}
+		//	if (GUI.Button(Rect((Screen.width/2)+100,Screen.height-100,100,30),"Credits")){
+    	//	LevelLoadFade.FadeAndLoadLevel("Credits", Color.white, 2.0);
+    	//}
     	
 }
