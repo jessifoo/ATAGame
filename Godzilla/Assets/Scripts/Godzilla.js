@@ -8,6 +8,7 @@ private var buttonDownPhaseStart : float;
 private var doubleClickPhaseStart : float;
 var speed : float = 3.0F;
 var flameSound : AudioClip;
+var landingSound : AudioClip;
 private var mousePos : Vector3;
 private var target : Vector3;
 private var click : String;
@@ -167,6 +168,7 @@ function performJump() {
 		transform.position = jumpLandPoint;
 		cameraStartPosition = Camera.main.gameObject.transform.position;
 		doJumpDamage();
+		Camera.main.audio.PlayOneShot(landingSound, 1);
 		jump_state++;
 	}
 	if ( jump_state == 4 ) { //RUMBLE CAMERA!
