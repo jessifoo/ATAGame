@@ -78,5 +78,11 @@ function OnGUI () {
 
 
 function Update () {
-
+	if(escapeCount > 30){
+		var npcs : GameObject[] = GameObject.FindGameObjectsWithTag("NPC");
+		for(var i = 0; i < npcs.length ; ++i){
+			npcs[i].BroadcastMessage("setToFlee");
+		}
+	}
+	
 }

@@ -71,6 +71,10 @@ function Update () {
 
 }
 
+function setToFlee(){
+	fleeing = true;
+}
+
 function OnTriggerEnter(other : Collider) {
 	if (other.name == "Godzilla") {
 		Kill();
