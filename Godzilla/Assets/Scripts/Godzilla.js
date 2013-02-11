@@ -16,11 +16,13 @@ private var city : CityGrid;
 private var path : Array = new Array();
 public var fire : ParticleSystem;
 private var fireCollider : BoxCollider;
+private var game : Game;
 
 function Start () {
 	controller = GetComponent(CharacterController);
 	myTransform = gameObject.transform;
 	city = GameObject.Find("CityGrid").GetComponent(CityGrid);
+	game = GameObject.Find("Game").GetComponent(Game);
 	
 	fire = GetComponentInChildren(ParticleSystem);
 	if (fire)
@@ -207,6 +209,7 @@ function endJump() {
 	isJumping = false;
 	lastJumpTime = Time.time;
 	path = new Array();
+	game.JumpPerformed();
 }
 
 //Cooldown the jump:
@@ -262,6 +265,7 @@ public function FlameOff() {
 	flaming = false;
 	fireCollider.enabled = false;
 	lastFlameTime = Time.time;
+	game.FlamePerformed();
 }
 
 

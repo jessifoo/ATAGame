@@ -118,7 +118,14 @@ function FixedUpdate () {
 	//Do panic:
 	doPanic();
 	
+	if (countdown == 10) {
+		var npcs : GameObject[] = GameObject.FindGameObjectsWithTag("NPC");
+		for(var i = 0; i < npcs.length ; ++i){
+			npcs[i].BroadcastMessage("setToFlee");
+		}
+	}
 	/*
+	
 	if(escapeCount > 30){
 		var npcs : GameObject[] = GameObject.FindGameObjectsWithTag("NPC");
 		for(var i = 0; i < npcs.length ; ++i){

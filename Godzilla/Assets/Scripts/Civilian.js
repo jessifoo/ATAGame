@@ -214,3 +214,22 @@ function followPath(path : Array){
 			}
 		}
 	}
+
+function SetColor(num : float) {
+	
+	
+	gameObject.renderer.material.color = Color.Lerp(Color.white, Color.red, num);
+
+}
+	
+function panic(num : float) {
+	if (num > 1)
+		num = Mathf.Clamp01(num);
+	SetColor(num);
+	SetSpeed(num);
+}
+
+function SetSpeed(num : float) {
+	walkSpeed = Mathf.Lerp(0.15, 0.8, num);
+	runSpeed = Mathf.Lerp(0.8, 1.5, num);
+}
