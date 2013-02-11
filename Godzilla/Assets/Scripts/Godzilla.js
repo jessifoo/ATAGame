@@ -48,6 +48,10 @@ function Update () {
  * FIXED UPDATE!
  */
 function FixedUpdate() {
+	if (!flaming){
+		flameCoolDown();
+	}
+	
 	if ( isJumping ) {
 		performJump();
 		return; // ONLY do jumping
@@ -218,9 +222,31 @@ function jumpCooldown() {
 
 
 
-
 //FLAME ON!
-var flaming : boolean = false;
+private var flaming : boolean = false;
+public var canFlame : boolean = true;
+
+// Will not be shown in the inspector or serialized
+@System.NonSerialized
+var lastFlameTime : float = 0;
+@System.NonSerialized
+var flameCoolDownTime : float = 5.0f;
+@System.NonSerialized
+var flamingTime : float = 2.0f;
+
+function flameCoolDown() {
+	if (Time.time > lastFlameTime + flameCoolDownTime) {
+		canFlame = true;
+	}
+}
+
+public function StartFlame() {
+	canFlame = false;
+	FlameOn();
+	yield WaitForSeconds(flamingTime);
+	FlameOff();
+}
+
 public function FlameOn() {
 	flaming = true;
 	fire.enableEmission = true;
@@ -230,9 +256,8 @@ public function FlameOff() {
 	fire.enableEmission = false;
 	flaming = false;
 	fireCollider.enabled = false;
+	lastFlameTime = Time.time;
 }
-
-
 
 
 

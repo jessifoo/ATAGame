@@ -91,10 +91,10 @@ function ControlGodzilla() : void {
 	}
 	
 	if ( Input.GetKey("space") ) {
-		godzilla.FlameOn();
-	} else {
-		godzilla.FlameOff();
-	}
+		if (godzilla.canFlame) {
+			godzilla.StartFlame();
+		}
+	} 
 }
 
 
