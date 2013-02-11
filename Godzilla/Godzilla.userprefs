@@ -1,18 +1,9 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Game.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Godzilla.js">
     <Files>
-<<<<<<< HEAD
-      <File FileName="Assets/Scripts/Civilian.js" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Godzilla.js" Line="171" Column="48" />
-      <File FileName="Assets/Scripts/startMenu.js" Line="1" Column="1" />
-=======
-      <File FileName="Assets/Scripts/Civilian.js" Line="76" Column="2" />
-      <File FileName="Assets/Scripts/Godzilla.js" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/startMenu.js" Line="38" Column="2" />
->>>>>>> small changes
-      <File FileName="Assets/Scripts/LevelLoadFade.js" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Game.js" Line="68" Column="41" />
+      <File FileName="Assets/Scripts/InputObject.js" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Godzilla.js" Line="123" Column="35" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

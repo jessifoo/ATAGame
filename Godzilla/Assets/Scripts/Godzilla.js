@@ -95,7 +95,7 @@ private var isJumping : boolean = false;
 var lastJumpTime : float = 0;
 // Will not be shown in the inspector or serialized
 @System.NonSerialized
-var jump_cooldownTime : float = 5.0; //NOTE: This is from the LANDING TIME!!!!!!
+var jump_cooldownTime : float = 0f; //NOTE: This is from the LANDING TIME!!!!!!
 private var jumpPoint : Vector3;
 public function JumpToPoint( newPoint : Vector3 ) {
 	canJump = false; // No longer can jump until cooldown completed!
@@ -120,7 +120,7 @@ private var jumpTakeOffPoint : Vector3;
 private var jumpVerticalPoint1 : Vector3;
 private var jumpVerticalPoint2 : Vector3;
 private var jumpLandPoint : Vector3;
-private var jumpHeight : float = 10.0;
+private var jumpHeight : float = 2.0;
 private var jump_PhaseFrames : float = 20;//Frames until jumpPhase is over
 private var jump_PhaseFrame : float = 0;//Current frame of jumpPhase
 function calculateJumpPoints() {
@@ -129,7 +129,7 @@ function calculateJumpPoints() {
 	jumpLandPoint = jumpPoint;
 	jumpVerticalPoint2 = jumpLandPoint + Vector3.up * jumpHeight;
 	jump_state = 0;
-	jumpHeight = Camera.main.gameObject.transform.position.y;
+	//jumpHeight = Camera.main.gameObject.transform.position.y;
 }
 //Perform a jump:
 private var jump_state : int = 0;
@@ -194,7 +194,7 @@ function doJumpDamage() {
 		buildingToLandOn = null;
 	}
 	//Get all NPCs in area:
-	var allObjectsInArea : Collider[] = Physics.OverlapSphere(jumpLandPoint, 0.5);
+	var allObjectsInArea : Collider[] = Physics.OverlapSphere(new Vector3(jumpLandPoint.x, 0, jumpLandPoint.z), 2);
 	for ( var collider : Collider in allObjectsInArea ) {
 		if ( collider.gameObject.name == "NPC" ) {
 			collider.gameObject.BroadcastMessage("Kill", null, SendMessageOptions.DontRequireReceiver);
@@ -233,7 +233,7 @@ public var canFlame : boolean = true;
 @System.NonSerialized
 var lastFlameTime : float = 0;
 @System.NonSerialized
-var flameCoolDownTime : float = 6.0f;
+var flameCoolDownTime : float = 0f;
 @System.NonSerialized
 var flamingTime : float = 3.0f;
 
