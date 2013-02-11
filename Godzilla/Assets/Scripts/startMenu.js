@@ -4,6 +4,8 @@ var wakeUp : GUIText;
 var quickIntro : GUIText;
 var quickIntro2 : GUIText;
 var quickIntro3 : GUIText;
+var credits1: GUIText;
+var credits2: GUIText;
 
 function Start () {
 

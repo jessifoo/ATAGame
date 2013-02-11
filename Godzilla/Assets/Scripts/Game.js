@@ -65,7 +65,7 @@ function GameOver() {
 	Debug.Log("Game is now Over!");
 	gameover = true;
 	yield WaitForSeconds(2);
-	LevelLoadFade.FadeAndLoadLevel("Start", Color.white, 2.0);
+	LevelLoadFade.FadeAndLoadLevel("Start 1", Color.white, 2.0);
 }
 
 //GUI:
