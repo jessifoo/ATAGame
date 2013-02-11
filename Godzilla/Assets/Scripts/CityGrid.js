@@ -136,6 +136,29 @@ function getAvailableWorldPoints() : Array {
 	return availableGridPoints;
 }
 
+//Get all available grid points:
+function getAvailableGridPoints_Spawn() : Array {
+	var availableGridPoints : Array = new Array();
+	var ii : int;
+	var jj : int;
+	for ( jj = gridSizeZ-2; jj >= 1; jj-- ) {
+		for ( ii = 1; ii < gridSizeX-1; ii++ ) {
+			if ( canMoveGrid[ii, jj] ) {
+				availableGridPoints.Push(new Vector2(ii,jj));
+			}
+		}
+	}
+	return availableGridPoints;
+}
+//Get all available world points:
+function getAvailableWorldPoints_Spawn() : Array {
+	var availableGridPoints : Array = getAvailableGridPoints_Spawn();
+	for ( var ii : int = 0; ii < availableGridPoints.length; ii++ ) {
+		availableGridPoints[ii] = gridPointToWorldPoint(availableGridPoints[ii]);
+	}
+	return availableGridPoints;
+}
+
 
 
 /**

@@ -26,7 +26,7 @@ function Start () {
 
 //Spawn a bunch of random NPCs:
 function spawnNPCs() {
-	var availableWorldPoints : Array = cityGrid.getAvailableWorldPoints();
+	var availableWorldPoints : Array = cityGrid.getAvailableWorldPoints_Spawn();
 	
 	//Debug.Log("NPC Spawned!  World Points available:"+availableWorldPoints.length);
 	var worldPoint : Vector3;
@@ -57,8 +57,8 @@ function incrementKillBy(count : int){
 
 function civilianEscaped(count : int){
 	escapeCount += count;
-	if (escapeCount >= escapedGameOverNum)
-		GameOver();
+	//if (escapeCount >= escapedGameOverNum)
+		//GameOver();
 }
 
 function GameOver() {
@@ -68,22 +68,79 @@ function GameOver() {
 	LevelLoadFade.FadeAndLoadLevel("Start 1", Color.white, 2.0);
 }
 
+
+
+
+
+
 //GUI:
+var guiSkin : GUISkin;
+var countdownSkin : GUISkin;
+var final_killed : int;
+var final_escaped : int;
 function OnGUI () {
-	GUI.Label(Rect (10, 10, 100, 20), "Score: " + killCount);
-	GUI.Label(Rect (10, 30, 100, 20), "Escaped: " + escapeCount + "/"+escapedGameOverNum);
-	if(gameover){
-		GUI.Label(Rect ((Screen.height/2)-150,(Screen.width/2)-200,(Screen.height*1.3),(Screen.width)), gameoverPic);
+	if ( !gameover ) {
+		GUI.skin = guiSkin;
+		guiSkin.label.fontSize = 16;
+		guiSkin.label.alignment = TextAnchor.UpperLeft;
+		GUI.Label(Rect (10, 10, 100, 20), "Score: " + killCount );
+		GUI.Label(Rect (10, 30, 100, 20), "Escaped: " + escapeCount );
+		GUI.skin = countdownSkin;
+		guiSkin.label.alignment = TextAnchor.UpperCenter;
+		guiSkin.label.fontSize = 28;
+		var clockWidth : float = 100;
+		GUI.Label(Rect (Screen.width / 2 - clockWidth / 2, 10, clockWidth, 40), "" + countdown);
+	}
+	if (gameover) {
+		GUI.skin = countdownSkin;
+		guiSkin.label.alignment = TextAnchor.MiddleCenter;
+		guiSkin.label.fontSize = 42;
+		GUI.Label(Rect (0, 100, Screen.width, Screen.width), 
+			"FINAL SCORE:\n\n" + "Citizens Killed: "+final_killed+"\n"+"Citizens Escaped: "+final_escaped);
+		
+		//GUI.Label(Rect ((Screen.height/2)-150,(Screen.width/2)-200,(Screen.height*1.3),(Screen.width)), gameoverPic);
 	}
 }
 
-
-function Update () {
+private var countdown_TOTAL : int = 60;
+private var countdown : int = countdown_TOTAL;
+function FixedUpdate () {
+	//Update countdown:
+	countdown = countdown_TOTAL - Mathf.FloorToInt(Time.time);
+	if ( countdown < 0 && !gameover ) {
+		gameover = true;
+		final_killed = killCount;
+		final_escaped = escapeCount;
+	}
+	if ( countdown < -5 ) {
+		LevelLoadFade.FadeAndLoadLevel("Start 1", Color.green, 2.0);
+	}
+	//Do panic:
+	doPanic();
+	
+	/*
 	if(escapeCount > 30){
 		var npcs : GameObject[] = GameObject.FindGameObjectsWithTag("NPC");
 		for(var i = 0; i < npcs.length ; ++i){
 			npcs[i].BroadcastMessage("setToFlee");
 		}
 	}
-	
+	*/
+}
+
+//Make Panic happen:
+var panic_level : float = 0;
+var panic_MAX : float = 50;
+function doPanic() {
+	var npcs : GameObject[] = GameObject.FindGameObjectsWithTag("NPC");
+	for(var i = 0; i < npcs.length ; ++i){
+		npcs[i].BroadcastMessage("panic", panic_level / panic_MAX, SendMessageOptions.DontRequireReceiver);
+	}	
+}
+
+function FlamePerformed() {
+	panic_level += 5;
+}
+function JumpPerformed() {
+	panic_level += 10;
 }
