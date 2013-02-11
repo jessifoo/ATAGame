@@ -1,5 +1,7 @@
 #pragma strict
 
+var game : Game;
+
 //Gizmo code:
 function OnDrawGizmos() {
 	Gizmos.color = Color (1, 1, 1, .2);
@@ -19,7 +21,9 @@ function FixedUpdate () {
 }
 function Start () {
 	//DoDeath();
+	game = GameObject.Find("Game").GetComponent(Game);
 }
+
 
 
 
@@ -41,6 +45,7 @@ function DoDeath() {
 	//Free Up my space in CityGrid:
 	GameObject.Find("CityGrid").GetComponent(CityGrid).freeWorldSpace(transform.position);
 	Destroy(gameObject);
+	game.incrementKillBy(10);
 }
 
 //Play damaged animation
