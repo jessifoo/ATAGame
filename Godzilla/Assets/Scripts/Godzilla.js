@@ -7,6 +7,7 @@ private var controller : CharacterController;
 private var buttonDownPhaseStart : float;
 private var doubleClickPhaseStart : float;
 var speed : float = 3.0F;
+var flameSound : AudioClip;
 private var mousePos : Vector3;
 private var target : Vector3;
 private var click : String;
@@ -230,9 +231,9 @@ public var canFlame : boolean = true;
 @System.NonSerialized
 var lastFlameTime : float = 0;
 @System.NonSerialized
-var flameCoolDownTime : float = 5.0f;
+var flameCoolDownTime : float = 6.0f;
 @System.NonSerialized
-var flamingTime : float = 2.0f;
+var flamingTime : float = 3.0f;
 
 function flameCoolDown() {
 	if (Time.time > lastFlameTime + flameCoolDownTime) {
@@ -251,6 +252,8 @@ public function FlameOn() {
 	flaming = true;
 	fire.enableEmission = true;
 	fireCollider.enabled = true;
+	//audio.PlayOneShot(flameSound, 2);
+	Camera.main.audio.PlayOneShot(flameSound, 0.5);
 }
 public function FlameOff() {
 	fire.enableEmission = false;
