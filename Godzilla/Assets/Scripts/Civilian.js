@@ -100,7 +100,8 @@ function Move( speed : float ) {
 		
 		RotateToDirection(direction);
     }
-	GetComponent(CharacterController).Move(myTransform.forward * speed * Time.deltaTime);
+	myTransform.position += myTransform.forward * speed * Time.deltaTime;
+	//GetComponent(CharacterController).Move(myTransform.forward * speed * Time.deltaTime);
 }
 
 function moveTo (point : Vector3)

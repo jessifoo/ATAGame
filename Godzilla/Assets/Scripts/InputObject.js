@@ -16,11 +16,14 @@ function OnDrawGizmos() {
 var godzilla : Godzilla;
 var cityGrid : CityGrid;
 
+//Mobile variables (to do some fancy stuff)
+var mobile : boolean = true;
+var mobile_jumpSelected : boolean = false;
+
 function Start () {
 	godzilla = GameObject.Find("Godzilla").GetComponent(Godzilla);
 	cityGrid = GameObject.Find("CityGrid").GetComponent(CityGrid);
 }
-
 
 //Update:
 function FixedUpdate () {
@@ -28,8 +31,37 @@ function FixedUpdate () {
 	MoveCamera();
 }
 //GUI:
+var guiButtonSkin : GUISkin;
 function OnGUI () {
-	
+	if ( mobile ) {
+		GUI.skin = guiButtonSkin;
+		
+		var btnHeight : float = 50;
+		var btnWidth : float  = 100;
+		var jumpBtn_Rect : Rect  = new Rect( 10, Screen.height - btnHeight - 10, 		btnWidth, btnHeight );
+		var flameBtn_Rect : Rect = new Rect( 10, Screen.height - btnHeight*2 - 20, 	btnWidth, btnHeight );
+		
+		var guiButton_NormalTexture : Texture2D = GUI.skin.button.normal.background;
+		var guiButton_ActiveTexture : Texture2D = GUI.skin.button.active.background;
+		if ( mobile_jumpSelected ) {
+			GUI.skin.button.normal.background = guiButton_ActiveTexture;
+			GUI.skin.button.active.background = guiButton_NormalTexture;
+			if (GUI.Button (jumpBtn_Rect, "JUMP") ) {
+				mobile_jumpSelected = false;
+			}
+			GUI.skin.button.normal.background = guiButton_NormalTexture;
+			GUI.skin.button.active.background = guiButton_ActiveTexture;
+		} else {
+			if (GUI.Button (jumpBtn_Rect, "JUMP") ) {
+				mobile_jumpSelected = true;
+			}
+		}
+		if ( GUI.Button(flameBtn_Rect, "FLAME") ) {
+			if (godzilla.canFlame) {
+				godzilla.StartFlame();
+			}
+		}
+	}
 }
 
 
@@ -60,17 +92,33 @@ function ControlGodzilla() : void {
 			worldPosition = hit.point;
 			hit.point.y = 0;
 			
-			//Is this a double-click?
-			Debug.Log("lastClickTime + doubleClickTimeOut >= Time.time=" + lastClickTime +"+" + doubleClickTimeOut +">=" + Time.time +" = " + (lastClickTime + doubleClickTimeOut >= Time.time));
-			Debug.Log("Can Jump?"+godzilla.canJump);
-			if ( lastClickTime + doubleClickTimeOut >= Time.time && godzilla.canJump) {
-				Debug.Log("Do double click!");
-				//Do Double Click:
-				godzilla.JumpToPoint(worldPosition);
-			} else {
-				Debug.Log("Do single click!");
-				//Do Single Click:
-				godzilla.MoveToPoint(worldPosition);
+			if ( mobile ) {
+				if ( mobile_jumpSelected ) {
+					mobile_jumpSelected = false;
+					godzilla.JumpToPoint(worldPosition);
+				} else {
+					//Is this a double-click?
+					if ( lastClickTime + doubleClickTimeOut >= Time.time && godzilla.canJump) {
+						Debug.Log("Do double click!");
+						//Do Double Click:
+						godzilla.JumpToPoint(worldPosition);
+					} else {
+						Debug.Log("Do single click!");
+						//Do Single Click:
+						godzilla.MoveToPoint(worldPosition);
+					}
+				}
+			} else {			
+				//Is this a double-click?
+				if ( lastClickTime + doubleClickTimeOut >= Time.time && godzilla.canJump) {
+					Debug.Log("Do double click!");
+					//Do Double Click:
+					godzilla.JumpToPoint(worldPosition);
+				} else {
+					Debug.Log("Do single click!");
+					//Do Single Click:
+					godzilla.MoveToPoint(worldPosition);
+				}
 			}
 		}
 	} else {

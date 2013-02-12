@@ -17,12 +17,15 @@ var npcPrefab : GameObject;
 var cityGrid : CityGrid;
 
 function Start () {
+	countdown = countdown_TOTAL;
+	levelStartTime = Time.time;
 	cityGrid = GameObject.Find("CityGrid").GetComponent(CityGrid);
 	cityGrid.Start();
 	if ( npcPrefab != null ) {
 		spawnNPCs();
 	}
 }
+
 
 //Spawn a bunch of random NPCs:
 function spawnNPCs() {
@@ -65,7 +68,7 @@ function GameOver() {
 	Debug.Log("Game is now Over!");
 	gameover = true;
 	yield WaitForSeconds(2);
-	LevelLoadFade.FadeAndLoadLevel("Start 1", Color.white, 2.0);
+	//LevelLoadFade.FadeAndLoadLevel("start 1", Color.white, 2.0);
 }
 
 
@@ -78,6 +81,7 @@ var guiSkin : GUISkin;
 var countdownSkin : GUISkin;
 var final_killed : int;
 var final_escaped : int;
+var highscore : boolean;
 function OnGUI () {
 	if ( !gameover ) {
 		GUI.skin = guiSkin;
@@ -95,25 +99,71 @@ function OnGUI () {
 		GUI.skin = countdownSkin;
 		guiSkin.label.alignment = TextAnchor.MiddleCenter;
 		guiSkin.label.fontSize = 42;
-		GUI.Label(Rect (0, 100, Screen.width, Screen.width), 
-			"FINAL SCORE:\n\n" + "Citizens Killed: "+final_killed+"\n"+"Citizens Escaped: "+final_escaped);
+		if ( highscore ) {
+			GUI.Label(Rect (0, 100, Screen.width, Screen.width), 
+				"FINAL SCORE:\n\n" + "Citizens Killed: " + final_killed + "\n" + "Citizens Escaped: " + final_escaped+"\nHIGH SCORE!");
+		} else {
+			GUI.Label(Rect (0, 100, Screen.width, Screen.width), 
+				"FINAL SCORE:\n\n" + "Citizens Killed: " + final_killed + "\n" + "Citizens Escaped: " + final_escaped);
+		}
 		
 		//GUI.Label(Rect ((Screen.height/2)-150,(Screen.width/2)-200,(Screen.height*1.3),(Screen.width)), gameoverPic);
 	}
 }
 
-private var countdown_TOTAL : int = 60;
-private var countdown : int = countdown_TOTAL;
+var countdown_TOTAL : int = 60;
+var countdown : int;
+var levelStartTime : float;
 function FixedUpdate () {
+	if ( Input.GetKeyDown( KeyCode.Escape ) ) {
+		countdown = countdown_TOTAL;
+		Application.LoadLevel(0);
+	}
 	//Update countdown:
-	countdown = countdown_TOTAL - Mathf.FloorToInt(Time.time);
+	countdown = countdown_TOTAL - Mathf.FloorToInt(Time.time - levelStartTime);
 	if ( countdown < 0 && !gameover ) {
 		gameover = true;
 		final_killed = killCount;
 		final_escaped = escapeCount;
+		var prev_final_killed_1 : int = PlayerPrefs.GetInt( "final_killed_1", 0 );
+		var prev_final_escaped_1 : int = PlayerPrefs.GetInt( "final_escaped_1", 0 );
+		var prev_final_killed_2 : int = PlayerPrefs.GetInt( "final_killed_2", 0 );
+		var prev_final_escaped_2 : int = PlayerPrefs.GetInt( "final_escaped_2", 0 );
+		var prev_final_killed_3 : int = PlayerPrefs.GetInt( "final_killed_3", 0 );
+		var prev_final_escaped_3 : int = PlayerPrefs.GetInt( "final_escaped_3", 0 );
+		if ( final_killed > prev_final_killed_1 || ( final_killed >= prev_final_killed_1 && final_escaped < prev_final_escaped_1 ) ) {
+			prev_final_killed_3 = prev_final_killed_2;
+			prev_final_escaped_3 = prev_final_escaped_2;
+			prev_final_killed_2 = prev_final_killed_1;
+			prev_final_escaped_2 = prev_final_escaped_1;
+			prev_final_killed_1 = final_killed;
+			prev_final_escaped_1 = final_escaped;
+			highscore = true;
+		} else
+		if ( final_killed >= prev_final_killed_2 || ( final_killed >= prev_final_killed_2 && final_escaped < prev_final_escaped_2 ) ) {
+			prev_final_killed_3 = prev_final_killed_2;
+			prev_final_escaped_3 = prev_final_escaped_2;
+			prev_final_killed_2 = final_killed;
+			prev_final_escaped_2 = final_escaped;
+			highscore = true;
+		} else 
+		if ( final_killed >= prev_final_killed_3 || ( final_killed >= prev_final_killed_3 && final_escaped < prev_final_escaped_3 ) ) {
+			prev_final_killed_3 = final_killed;
+			prev_final_escaped_3 = final_escaped;
+			highscore = true;
+		}
+		PlayerPrefs.SetInt("final_killed_1", prev_final_killed_1);
+		PlayerPrefs.SetInt("final_escaped_1", prev_final_escaped_1);
+		PlayerPrefs.SetInt("final_killed_2", prev_final_killed_2);
+		PlayerPrefs.SetInt("final_escaped_2", prev_final_escaped_2);
+		PlayerPrefs.SetInt("final_killed_3", prev_final_killed_3);
+		PlayerPrefs.SetInt("final_escaped_3", prev_final_escaped_3);
+		PlayerPrefs.Save();
 	}
 	if ( countdown < -5 ) {
-		LevelLoadFade.FadeAndLoadLevel("Start 1", Color.green, 2.0);
+		countdown = countdown_TOTAL;
+		Application.LoadLevel(0);
+		//LevelLoadFade.FadeAndLoadLevel("start 1", Color.white, 2.0);
 	}
 	//Do panic:
 	doPanic();

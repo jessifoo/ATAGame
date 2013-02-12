@@ -83,7 +83,11 @@ public function LookAtPoint(point:Vector3) : void {
 
 //Move Godzilla to the inputted point: (just set the path)
 public function MoveToPoint( newPoint : Vector3 ) {
-	path = city.getWorldPath_forGodzilla(myTransform.position, newPoint);
+	//If we're too far outside the boundaries of the world, ignore the point:
+	var gridPoint : Vector3 = city.worldPointToGridPoint(newPoint);
+	if ( city.isGridPointInGrid(gridPoint) ){
+		path = city.getWorldPath_forGodzilla(myTransform.position, newPoint);
+	}
 }
 
 
@@ -100,6 +104,12 @@ var lastJumpTime : float = 0;
 var jump_cooldownTime : float = 0f; //NOTE: This is from the LANDING TIME!!!!!!
 private var jumpPoint : Vector3;
 public function JumpToPoint( newPoint : Vector3 ) {
+	//If we're too far outside the boundaries of the world, ignore the point:
+	var cgridPoint : Vector3 = city.worldPointToGridPoint(newPoint);
+	if ( !city.isGridPointInGrid(cgridPoint) ){
+		return;
+	}
+	
 	canJump = false; // No longer can jump until cooldown completed!
 	if ( allowBuildingJumping ) {
 		//Building jumping possibilities:
