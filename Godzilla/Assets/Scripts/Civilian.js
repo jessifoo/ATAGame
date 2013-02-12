@@ -86,6 +86,25 @@ function OnTriggerEnter(other : Collider) {
 }
 
 function Move( speed : float ) {
+	//Non physics method:
+	//*
+	var current_GridPoint : Vector2 = cityGrid.worldPointToGridPoint(transform.position);
+	var distance : float = speed * Time.deltaTime * 2 + myTransform.localScale.z;
+	var next_GridPoint : Vector2 = cityGrid.worldPointToGridPoint(transform.position + myTransform.forward * distance);
+	if ( current_GridPoint != next_GridPoint && !cityGrid.isGridPointAvailable(next_GridPoint) ) {
+		//Need to turn:
+		var direction : Vector3 = transform.forward;
+		var normal : Vector3 = new Vector3(next_GridPoint.x - current_GridPoint.x, 0, next_GridPoint.y - current_GridPoint.y);
+		direction = Vector3.Reflect(direction, normal);
+		direction.y = 0;
+		direction.Normalize();
+		Debug.DrawLine(myTransform.position, myTransform.position + direction, Color.red, 1);
+		Debug.DrawLine(myTransform.position, myTransform.position + myTransform.forward, Color.red, 1);
+		RotateToDirection(direction);
+	}
+	
+	/*/
+	//Physics method:
 	var hit : RaycastHit;
 	var p1 : Vector3 = myTransform.position;
 	var p2 : Vector3 = p1 + myTransform.forward * speed * Time.deltaTime * 2;
@@ -100,6 +119,7 @@ function Move( speed : float ) {
 		
 		RotateToDirection(direction);
     }
+	//*/
 	myTransform.position += myTransform.forward * speed * Time.deltaTime;
 	//GetComponent(CharacterController).Move(myTransform.forward * speed * Time.deltaTime);
 }
