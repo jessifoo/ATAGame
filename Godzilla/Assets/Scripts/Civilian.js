@@ -11,9 +11,9 @@ var speedDeviation : float = 0.5f;
 var maxRandTurn : float = 5.0f;
 
 var myTransform : Transform;
-var cityGrid : CityGrid;
-var godzilla : Transform;
-var game : Game;
+private var cityGrid : CityGrid;
+private var godzilla : Transform;
+private var game : Game;
 var path : Array = new Array();
 var safezone : GameObject;
 var safezones : GameObject[];
@@ -34,9 +34,7 @@ function Start () {
 	game = GameObject.Find("Game").GetComponent(Game);
 	
 	flames = GetComponentInChildren(ParticleSystem);
-	if (flames)
-		flames.enableEmission = false;
-		
+
 	//safezone = GameObject.Find("SafeZone");
 	safezones = GameObject.FindGameObjectsWithTag("SafeZone");
 	findNearestSafeZone();
@@ -67,8 +65,6 @@ function Update () {
 		RandomWalk();
 	}
 	
-//	findNearestSafeZone();
-
 }
 
 function setToFlee(){
@@ -124,8 +120,7 @@ function Move( speed : float ) {
 	//GetComponent(CharacterController).Move(myTransform.forward * speed * Time.deltaTime);
 }
 
-function moveTo (point : Vector3)
-	{
+function moveTo (point : Vector3) {
 		point.y = myTransform.position.y;
 		var distance : float = Vector3.Distance (myTransform.position, point);
 		myTransform.LookAt (point);
@@ -153,7 +148,6 @@ function RandomWalk() {
 }
 
 function RunToPoint(newPos : Vector3) {
-	//myTransform.LookAt(newPos);
 	RotateToDirection( newPos );
 	Move(runSpeed);
 }
@@ -174,7 +168,7 @@ function RunToSafeZone() {
 }
 
 function OnFire() {
-	flames.enableEmission = true;
+	flames.Play();
 	yield WaitForSeconds(onFireTime);
 	Kill();
 }
@@ -205,11 +199,6 @@ function findNearestSafeZone(){
 	//var safezoneLoc : Vector3 = safezone.transform.position;
 	//Debug.Log("safezone: " + safezoneLoc);
 	//startMovement(safezoneLoc);
-}
-
-function findSafeZones(){
-	
-	
 }
 
 function startMovement(toPosition : Vector3){

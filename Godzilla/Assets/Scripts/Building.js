@@ -16,9 +16,7 @@ function OnDrawGizmos() {
 //Health of the building:
 var health : float = 100;
 
-function FixedUpdate () {
-	
-}
+
 function Start () {
 	//DoDeath();
 	game = GameObject.Find("Game").GetComponent(Game);

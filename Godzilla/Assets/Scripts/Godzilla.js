@@ -18,6 +18,7 @@ public var fire : ParticleSystem;
 private var fireCollider : BoxCollider;
 private var game : Game;
 
+
 function Start () {
 	controller = GetComponent(CharacterController);
 	myTransform = gameObject.transform;
@@ -25,8 +26,6 @@ function Start () {
 	game = GameObject.Find("Game").GetComponent(Game);
 	
 	fire = GetComponentInChildren(ParticleSystem);
-	if (fire)
-		fire.enableEmission = false;
 	fireCollider = GameObject.Find("FireBreath").GetComponent(BoxCollider).collider;
 	fireCollider.enabled = false;
 }
@@ -265,14 +264,13 @@ public function StartFlame() {
 
 public function FlameOn() {
 	flaming = true;
-	fire.enableEmission = true;
+	fire.Play();
 	fireCollider.enabled = true;
-	//audio.PlayOneShot(flameSound, 2);
 	Camera.main.audio.PlayOneShot(flameSound, 0.5);
 }
 public function FlameOff() {
-	fire.enableEmission = false;
 	flaming = false;
+	fire.Stop();
 	fireCollider.enabled = false;
 	lastFlameTime = Time.time;
 	game.FlamePerformed();
