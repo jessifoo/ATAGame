@@ -10,7 +10,6 @@ var onFireTime : float = 3.0f;
 var speedDeviation : float = 0.5f;
 var maxRandTurn : float = 5.0f;
 
-var myTransform : Transform;
 private var cityGrid : CityGrid;
 private var godzilla : Transform;
 private var game : Game;
@@ -18,7 +17,8 @@ var path : Array = new Array();
 var safezone : GameObject;
 var safezones : GameObject[];
 var fleeing : boolean = false;
-
+var screamVolume : float;
+var screamSounds : AudioClip[];
 
 private var flames : ParticleSystem;
 
@@ -27,7 +27,6 @@ var testPoint = Vector3(20, 0.5, 20);
 var points = new Array(testPoint, Vector3(30, 0.5, 40));
 
 function Start () {
-	myTransform = gameObject.transform;
 	cityGrid = GameObject.Find("CityGrid").GetComponent(CityGrid);
 	var zilla: GameObject = GameObject.Find("Godzilla");
 	godzilla = zilla.transform;
@@ -53,7 +52,7 @@ function Start () {
 function Update () {
 	transform.position.y = 0.06;
 	
-	var distToEnemy = Vector3.Distance(myTransform.position, godzilla.position);
+	var distToEnemy = Vector3.Distance(transform.position, godzilla.position);
 	if (distToEnemy < runRadius) {
 		fleeing = false;
 		RunFromEnemy();
@@ -85,8 +84,8 @@ function Move( speed : float ) {
 	//Non physics method:
 	//*
 	var current_GridPoint : Vector2 = cityGrid.worldPointToGridPoint(transform.position);
-	var distance : float = speed * Time.deltaTime * 2 + myTransform.localScale.z;
-	var next_GridPoint : Vector2 = cityGrid.worldPointToGridPoint(transform.position + myTransform.forward * distance);
+	var distance : float = speed * Time.deltaTime * 2 + transform.localScale.z;
+	var next_GridPoint : Vector2 = cityGrid.worldPointToGridPoint(transform.position + transform.forward * distance);
 	if ( current_GridPoint != next_GridPoint && !cityGrid.isGridPointAvailable(next_GridPoint) ) {
 		//Need to turn:
 		var direction : Vector3 = transform.forward;
@@ -94,8 +93,8 @@ function Move( speed : float ) {
 		direction = Vector3.Reflect(direction, normal);
 		direction.y = 0;
 		direction.Normalize();
-		Debug.DrawLine(myTransform.position, myTransform.position + direction, Color.red, 1);
-		Debug.DrawLine(myTransform.position, myTransform.position + myTransform.forward, Color.red, 1);
+		Debug.DrawLine(transform.position, transform.position + direction, Color.red, 1);
+		Debug.DrawLine(transform.position, transform.position + transform.forward, Color.red, 1);
 		RotateToDirection(direction);
 	}
 	
@@ -116,16 +115,16 @@ function Move( speed : float ) {
 		RotateToDirection(direction);
     }
 	//*/
-	myTransform.position += myTransform.forward * speed * Time.deltaTime;
+	transform.position += transform.forward * speed * Time.deltaTime;
 	//GetComponent(CharacterController).Move(myTransform.forward * speed * Time.deltaTime);
 }
 
 function moveTo (point : Vector3) {
-		point.y = myTransform.position.y;
-		var distance : float = Vector3.Distance (myTransform.position, point);
-		myTransform.LookAt (point);
+		point.y = transform.position.y;
+		var distance : float = Vector3.Distance (transform.position, point);
+		transform.LookAt (point);
 		if (distance > 0.1) {
-			myTransform.position += myTransform.forward * Time.deltaTime * runSpeed;
+			transform.position += transform.forward * Time.deltaTime * runSpeed;
 		}
 	}
 
@@ -138,12 +137,12 @@ function RotateToDirection(direction : Vector3) {
 	var cross : float = Vector3.Cross(direction, transform.forward).y;
 	var sign : int = cross < 0 ? 1 : -1;
 	
-	myTransform.Rotate(0, sign * angle, 0);
+	transform.Rotate(0, sign * angle, 0);
 }
 
 function RandomWalk() {
 	var randTurn = Random.Range(-maxRandTurn, maxRandTurn);
-	myTransform.Rotate(0, randTurn, 0);
+	transform.Rotate(0, randTurn, 0);
 	Move(walkSpeed);
 }
 
@@ -153,7 +152,7 @@ function RunToPoint(newPos : Vector3) {
 }
 
 function RunFromEnemy() {
-	var dirToRun : Vector3 = myTransform.position - godzilla.position;
+	var dirToRun : Vector3 = transform.position - godzilla.position;
 	dirToRun.y = 0;
 	RunToPoint(dirToRun);
 }
@@ -169,6 +168,8 @@ function RunToSafeZone() {
 
 function OnFire() {
 	flames.Play();
+	var num : int = Random.Range(0, screamSounds.Length-1);
+	Camera.main.audio.PlayOneShot(screamSounds[num], screamVolume);
 	yield WaitForSeconds(onFireTime);
 	Kill();
 }
@@ -189,7 +190,7 @@ function findNearestSafeZone(){
 	var nearest : float = 100;
 	var safezoneLoc : Vector3;
 	for(var i = 0; i < safezones.Length; ++i){
-		var distance : float = Vector3.Distance(myTransform.position, safezones[i].transform.position);
+		var distance : float = Vector3.Distance(transform.position, safezones[i].transform.position);
 		if( distance < nearest ){
 			nearest = distance;
 			safezone = safezones[i];
@@ -214,7 +215,7 @@ function startMovement(toPosition : Vector3){
 	
 function followPath(path : Array){
 		if (path.length > 0){
-			var distance : float = Vector3.Distance (myTransform.position, path[0]);
+			var distance : float = Vector3.Distance (transform.position, path[0]);
 			if(distance < 0.2){
 				//Debug.Log("At point");
 				path.RemoveAt(0);
