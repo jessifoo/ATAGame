@@ -102,14 +102,20 @@ var lastJumpTime : float = 0;
 @System.NonSerialized
 var jump_cooldownTime : float = 0f; //NOTE: This is from the LANDING TIME!!!!!!
 private var jumpPoint : Vector3;
+private var jump_distance : int = 4;
 public function JumpToPoint( newPoint : Vector3 ) {
 	//If we're too far outside the boundaries of the world, ignore the point:
-	var cgridPoint : Vector3 = city.worldPointToGridPoint(newPoint);
+	var cgridPoint : Vector2 = city.worldPointToGridPoint(newPoint);
 	if ( !city.isGridPointInGrid(cgridPoint) ){
 		return;
 	}
-	
 	canJump = false; // No longer can jump until cooldown completed!
+	jumpPoint = city.getWorldJumpPoint(transform.position, newPoint, jump_distance, allowBuildingJumping);
+	var gridJumpPoint : Vector2 = city.worldPointToGridPoint(jumpPoint);
+	if ( !city.isGridPointAvailable(city.worldPointToGridPoint(gridJumpPoint) ) ) {
+		buildingToLandOn = city.getBlockingObjectAtGridPoint(gridJumpPoint);
+	}
+	/*
 	if ( allowBuildingJumping ) {
 		//Building jumping possibilities:
 		var gridPoint : Vector2 = city.getClosestGridPointTo(newPoint);
@@ -119,7 +125,7 @@ public function JumpToPoint( newPoint : Vector3 ) {
 		}
 	} else {
 		jumpPoint = city.gridPointToWorldPoint( city.getClosestAvailableGridPointTo(newPoint) ); //OLD, NO BUILDING DESTRUCTION
-	}
+	}*/
 	jumpPoint.y = transform.position.y;
 	path = new Array(); // Clear the path for now
 	LookAtPoint(jumpPoint);

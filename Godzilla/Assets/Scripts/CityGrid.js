@@ -233,6 +233,50 @@ function isGridPointInGrid(gridPoint : Vector2) : boolean {
 
 
 
+
+/**
+ * Return a valid jump point
+ * @param	oldPoint
+ * @param	newPoint
+ * @param	jump_distance
+ * @param	allowBuildingJumping
+ */
+function getWorldJumpPoint(oldPoint : Vector3, newPoint : Vector3, jump_distance : float, allowBuildingJumping : boolean) : Vector3 {
+	var gridOldPoint : Vector2 = worldPointToGridPoint(oldPoint);
+	var gridNewPoint : Vector2 = worldPointToGridPoint(newPoint);
+	var jumpPoint : Vector3;
+	
+	//Ensure new point is no further than jump_distance away:
+	var distance : float = (gridOldPoint - gridNewPoint).magnitude;
+	if ( distance > jump_distance ) {
+		var closerPoint : Vector2 = Vector2.Lerp(gridOldPoint, gridNewPoint, jump_distance / distance);
+		gridNewPoint.x = Mathf.Floor(closerPoint.x);
+		gridNewPoint.y = Mathf.Floor(closerPoint.y);
+	}
+	
+	//Check building jumping:
+	if ( allowBuildingJumping ) {
+		jumpPoint = gridPointToWorldPoint( gridNewPoint ); //Building jumping possibilities
+	} else {
+		jumpPoint = gridPointToWorldPoint( getClosestAvailableGridPointTo(gridNewPoint) ); //OLD, NO BUILDING DESTRUCTION
+	}
+	
+	return jumpPoint;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * Gets the World Path from one point to another point FOR GODZILLA!
  * @param	from
