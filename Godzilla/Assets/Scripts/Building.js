@@ -22,9 +22,6 @@ function Start () {
 	game = GameObject.Find("Game").GetComponent(Game);
 }
 
-
-
-
 //Building got damaged!
 function Damage ( amount : float ) {
 	health -= amount;

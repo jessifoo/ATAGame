@@ -61,7 +61,8 @@ function Update () {
 		fleeing = true;
 	} else {
 		fleeing = false;
-		RandomWalk();
+		//RandomWalk();
+		Move(walkSpeed);
 	}
 	
 }
