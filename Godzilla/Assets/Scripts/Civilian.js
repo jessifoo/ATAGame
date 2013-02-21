@@ -46,7 +46,7 @@ function Start () {
 	walkSpeed *= deviation;
 	runSpeed *= deviation;
 	
-	
+	panic(0f);
 }
 
 function Update () {

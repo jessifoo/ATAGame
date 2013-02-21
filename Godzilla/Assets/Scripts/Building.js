@@ -39,7 +39,9 @@ function Damage ( amount : float ) {
 var building_Destroy_Cloud_Prefab : GameObject;
 function DoDeath() {
 	//Add some fancy graphical effects here
-	Instantiate(building_Destroy_Cloud_Prefab, transform.position, transform.rotation);
+	var cloud_effect : GameObject = Instantiate(building_Destroy_Cloud_Prefab, transform.position, transform.rotation);
+	// Destroy the instatiated effect after 2 seconds
+	Destroy(cloud_effect, 2);
 	//Free Up my space in CityGrid:
 	GameObject.Find("CityGrid").GetComponent(CityGrid).freeWorldSpace(transform.position);
 	Destroy(gameObject);

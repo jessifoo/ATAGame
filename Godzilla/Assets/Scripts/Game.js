@@ -188,10 +188,14 @@ function FixedUpdate () {
 //Make Panic happen:
 var panic_level : float = 0;
 var panic_MAX : float = 50;
+var last_panic_value : float = 0f;
 function doPanic() {
-	var npcs : GameObject[] = GameObject.FindGameObjectsWithTag("NPC");
-	for(var i = 0; i < npcs.length ; ++i){
-		npcs[i].BroadcastMessage("panic", panic_level / panic_MAX, SendMessageOptions.DontRequireReceiver);
+	var panic_value : float = panic_level / panic_MAX;
+	if (panic_value != last_panic_value) {
+		var npcs : GameObject[] = GameObject.FindGameObjectsWithTag("NPC");
+		for(var i = 0; i < npcs.length ; ++i){
+			npcs[i].BroadcastMessage("panic", panic_level / panic_MAX, SendMessageOptions.DontRequireReceiver);
+		}
 	}	
 }
 
